@@ -11,7 +11,7 @@
 ## Stack Overview
 
 - **Framework**: Nuxt 4.x (Vue 3 + TypeScript)
-- **UI Library**: `@nuxt/ui` v3 — 54 auto-imported components, all prefixed with `U` (e.g., `<UButton>`, `<UCard>`)
+- **UI Library**: `@nuxt/ui` v4 — 54 auto-imported components, all prefixed with `U` (e.g., `<UButton>`, `<UCard>`)
 - **Styling**: Tailwind CSS (via `@nuxt/ui`) — utility-first, never write raw CSS unless necessary
 - **Content**: `@nuxt/content` with MDC (Markdown Components)
 - **Icons**: Iconify via `@nuxt/ui` — use the `icon` prop on `<UIcon>` or component `icon` props.
