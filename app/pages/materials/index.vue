@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { lectures, semesters, type Semester } from '~/data/lectures'
 
-const currentSemester = semesters.find(s => s.isCurrent) ?? semesters[0]
+const currentSemester = (semesters.find(s => s.isCurrent) ?? semesters[0]) ?? { id: "SS2026" }
 const selectedSemesterId = ref(currentSemester.id)
 
 const semesterItems = computed(() => {

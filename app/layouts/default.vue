@@ -27,7 +27,7 @@ const footerLinks = [
 <template>
   <div class="flex min-h-screen flex-col">
     <UHeader>
-      <template #logo>
+      <template #title>
         <NuxtLink to="/" class="text-primary font-bold text-lg">
           Einführung in KI &amp; ML
         </NuxtLink>
@@ -50,7 +50,7 @@ const footerLinks = [
           </UButton>
         </template>
         <template v-else>
-          <span class="text-sm text-muted">Not signed in</span>
+          <span class="text-sm text-muted mr-5">Not signed in</span>
           <UButton
             color="primary"
             @click="showLoginHelp = true"

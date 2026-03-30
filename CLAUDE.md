@@ -130,3 +130,26 @@ Use this link to get access to the Figma design file of the project: https://www
 - Prefer composition API (`<script setup>`) over Options API
 - Component file names: PascalCase (`MyComponent.vue`)
 - No trailing summaries needed after completing tasks
+
+---
+
+## Known Pitfalls (past mistakes — do not repeat)
+
+- **`main.css` must import both Tailwind and Nuxt UI** — `@nuxt/ui` v4 uses Tailwind CSS v4 via a Vite plugin that only processes CSS files with an explicit import. Without it, zero styles are generated. Always ensure `main.css` starts with:
+  ```css
+  @import "tailwindcss";
+  @import "@nuxt/ui";
+  ```
+- **Font CSS variable is `--font-sans`, not `--ui-font-sans`** — the correct Tailwind v4 CSS variable name is `--font-sans`. Using `--ui-font-sans` has no effect.
+- **`app.config.ts` belongs in `app/`, not the project root** — in Nuxt 4 with the `app/` source directory, `app.config.ts` must be placed at `app/app.config.ts`. A root-level `app.config.ts` is ignored.
+- The **leftmost slot** of the `UHeader` component is called `#title`, not `#logo`.
+
+---
+
+## Reference Documentation
+
+- [Nuxt UI — Installation (Nuxt)](https://ui.nuxt.com/docs/getting-started/installation/nuxt)
+- [Nuxt UI — Migration to v4](https://ui.nuxt.com/docs/getting-started/migration/v4)
+- [Nuxt UI — Design System](https://ui.nuxt.com/docs/getting-started/theme/design-system)
+- [Nuxt UI — CSS Variables](https://ui.nuxt.com/docs/getting-started/theme/css-variables)
+- [Nuxt UI — Component Themes](https://ui.nuxt.com/docs/getting-started/theme/components)
