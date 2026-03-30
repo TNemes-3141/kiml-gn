@@ -37,6 +37,13 @@ const footerLinks = [
         :items="isAuthenticated ? authenticatedLinks : unauthenticatedLinks"
       />
 
+      <template #body>
+        <UNavigationMenu
+          :items="isAuthenticated ? authenticatedLinks : unauthenticatedLinks"
+          orientation="vertical"
+        />
+      </template>
+
       <template #right>
         <template v-if="isAuthenticated">
           <span class="text-sm">

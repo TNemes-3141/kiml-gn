@@ -143,6 +143,7 @@ Use this link to get access to the Figma design file of the project: https://www
 - **Font CSS variable is `--font-sans`, not `--ui-font-sans`** — the correct Tailwind v4 CSS variable name is `--font-sans`. Using `--ui-font-sans` has no effect.
 - **`app.config.ts` belongs in `app/`, not the project root** — in Nuxt 4 with the `app/` source directory, `app.config.ts` must be placed at `app/app.config.ts`. A root-level `app.config.ts` is ignored.
 - The **leftmost slot** of the `UHeader` component is called `#title`, not `#logo`.
+- **`UHeader` has no `links` prop** — to show navigation, put `<UNavigationMenu>` in the **default slot** (desktop) and again in the **`#body` slot** with `orientation="vertical"` (mobile collapsible panel). The mobile panel only renders the `#body` slot; the default slot is hidden on narrow screens.
 
 ---
 
