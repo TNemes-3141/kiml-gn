@@ -24,5 +24,3 @@ logs
 !.env.example
 
 # Documentation files for AI
-CLAUDE.md
-specification.md
