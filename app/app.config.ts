@@ -12,7 +12,7 @@ export default defineAppConfig({
     pageHero: {
       slots: {
         root: 'relative isolate',
-        container: 'flex flex-col lg:grid py-12 sm:py-8 lg:py-16 gap-16 sm:gap-y-24',
+        container: 'flex flex-col lg:grid py-12 sm:py-8 lg:py-20 gap-16 sm:gap-y-24',
         wrapper: '',
         header: '',
         headline: 'mb-4',

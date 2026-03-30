@@ -2,18 +2,6 @@
 import { lectures, semesters } from '~/data/lectures'
 
 const { isAuthenticated } = useAuth()
-const colorMode = useColorMode()
-
-const themeOptions = [
-  { label: 'Light', value: 'light', icon: 'i-lucide-sun' },
-  { label: 'Dark', value: 'dark', icon: 'i-lucide-moon' },
-  { label: 'System', value: 'system', icon: 'i-lucide-monitor' }
-]
-
-const themeIcon = computed(() => {
-  const match = themeOptions.find(o => o.value === colorMode.preference)
-  return match?.icon ?? 'i-lucide-monitor'
-})
 
 const currentSemester = semesters.find(s => s.isCurrent)
 const previewLectures = lectures
@@ -30,18 +18,6 @@ const previewLectures = lectures
       description="Grünbauer, René; Nemes, Tamás"
       class="text-center"
     />
-
-    <!-- Theme selector -->
-    <div class="flex justify-center pb-8">
-      <USelect
-        v-model="colorMode.preference"
-        :items="themeOptions"
-        value-key="value"
-        label-key="label"
-        :icon="themeIcon"
-        class="w-auto"
-      />
-    </div>
 
     <!-- Quick access separator -->
     <USeparator label="Quick access" class="mx-auto mb-10 max-w-lg" />

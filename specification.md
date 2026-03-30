@@ -21,7 +21,6 @@ Route: `/` (two variants in Figma: `/ (authenticated)` and `/ (unauthenticated)`
 The entry page of the application consisting of the following parts:
 - Minimal header section (common for all sub-pages; see [[Course platform - Specification#Common header|Course platform - Specification > Common header]] for specifics)
 - Centered `PageHero` text with the title of the course "Einführung in Maschinelles Lernen & Künstliche Intelligenz", with the subtitle "Grünbauer, René; Nemes, Tamás"
-- A theme selector toggle below the hero text (light/dark/system)
 - `Separator` element with a text "Quick access"
 - The main part of the page then consists of a bento-style overview/quick-access board of the different functionalities of the platform. Each box is related to one of the platform functions:
 	- Top row: Lecture materials
