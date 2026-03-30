@@ -4,9 +4,14 @@ export default defineEventHandler(async () => {
     "SELECT first_name as firstName, last_name as lastName, email FROM students WHERE id = 'student-demo-1'"
   )
 
-  if (!result.rows[0]) {
+  const row = result.rows[0]
+  if (!row) {
     throw createError({ statusCode: 404, message: 'Demo user not found' })
   }
 
-  return result.rows[0] as { firstName: string; lastName: string; email: string }
+  return {
+    firstName: row.firstName as string,
+    lastName: row.lastName as string,
+    email: row.email as string
+  }
 })

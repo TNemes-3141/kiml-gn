@@ -67,7 +67,46 @@ Each lecture material is a title text with an associated link, and a card consis
 
 ### Programming tasks page
 Route: `/tasks`
-Do not implement yet.
+This route is **only accessible to authenticated users**. Use middleware to check for authentication status. The user can access this page by:
+- Typing in the route to the browser
+- Clicking the corresponding link in the `NavigationMenu` of the header
+- Clicking the button in the corresponding bento box section on the home page
+
+As all sub-pages, the first element is a centered hero-text containing the page title; subtitle: "Overview of assigned tasks and your progress".
+
+#### Starting page: `/tasks`
+Frame in Figma: `/tasks`
+From top to bottom:
+- Blue card with `i-lucide-info` icon, text and two buttons: "Dismiss", which removes the card, and "Do not show again", which removes the card and sets a cookie to mark the preference. Text content: "Here, you can see all programming tasks that will be assigned during the semester. A blue open lock icon shows the tasks that can currently be edited. Please note the deadline dates for submission. Only the tasks that show the status “Submitted” have been submitted properly and are eligible for grading (pass/fail). Please note you need to pass at least (i) out of (j) tasks to complete your final submission.", where:
+	- (i) is the `passing_threshold` value of the DB record of the current semester ("current semester" is defined as the record in the `semesters` table with the latest `start_date`; see [[Course platform - Specification#Schema]] for reference)
+	- (j) is the number of records in the `tasks` table where `semester_id` is the ID of the current semester
+- Red card with `i-lucide-octagon-alert` icon, text and no buttons. Text content: "All deadlines are strict and we do not accept late submissions! Deadline extensions cannot be granted. It is your individual responsibility to start solving the tasks early enough so that you can hand in your results on time. In particular, the checking engine for scoring submissions can take a substantial amount of time to run on the server."
+- Progress bar (color `primary`) with label "Tasks passed:" above and a large text "(x) / (y)" to the right, where:
+	- (x) is the number of records from the `student_task_states` table where `student_id` == currently authenticated student and `status` == PASSED
+	- (y) is the same number as (i) above.
+- H1 with `class="mb-6 mt-10 text-4xl font-bold"` and the text "Task overview"
+- Task overview list
+
+The task overview list shows all task records of the current semester as a card in structured format:
+- **Icon**: Grey `i-lucide-lock` if `unlock_time` is in the future; or `i-lucide-lock-open` in the `secondary` color if `unlock_time` is in the past
+- **Title:** Substitute the string "Task #(a): (b)" with `serial_num` for (a) and `title` for (b)
+- **Status**: `UBadge` component
+	- If task not unlocked yet: "Locked", color `neutral`, variant `subtle`
+	- If task unlocked and status of student task state is NOT_COMPLETED: "Not completed", color `warning`, variant `subtle`
+	- If task unlocked and status of student task state is PASSED: "Passed", color `success`, variant `subtle`
+	- If task unlocked and status of student task state is FAILED: "Failed", color `error`, variant `subtle`
+- **Opens at:** `unlock_time` in `dd.mm.yyyy hh.mm.ss timezone` format
+- **Deadline:** `submission_deadline` in `dd.mm.yyyy hh.mm.ss timezone` format
+- At the bottom right, an "Open" button with a right arrow icon (color: `neutral`, variant: `solid`) is placed. When pressed, it redirects to the `/tasks/[task-slug]/details` page. If the task is not unlocked yet, the button is disabled.
+
+#### Task details: `/tasks/[task-slug]/details`
+Frame in Figma: `/tasks/task-1-neuronale-netzwerke/details`
+
+#### Solution and leaderboard: `/tasks/[task-slug]/solution`
+Frame in Figma: `/tasks/task-1-neuronale-netzwerke/solution
+
+#### Submit: ``/tasks/[task-slug]/submission`
+Frame in Figma: `/tasks/task-1-neuronale-netzwerke/submission`
 
 ### Final report page
 Route: `/final-submission`
@@ -104,7 +143,7 @@ CREATE TABLE students (
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     public_alias VARCHAR(50) UNIQUE,      -- Displayed on the leaderboard, NULL on default
-    token_hash VARCHAR(255),              -- SHA-256 hash of their access token, NULL if not logged in yet
+    token_hash VARCHAR(255),     -- SHA-256 hash of their access token, NULL if not logged in yet
     semester_id VARCHAR(50) NOT NULL,     -- For bulk deletion at semester end
     first_login_at TIMESTAMP,
     -- Final Portfolio Legal & Submission
@@ -123,9 +162,10 @@ CREATE TABLE tasks (
     id VARCHAR(50) PRIMARY KEY,
     serial_num INTEGER NOT NULL,          -- e.g., Task 1, Task 2
     semester_id VARCHAR(50) NOT NULL,
-    title VARCHAR(255) NOT NULL,
+    title VARCHAR(255) NOT NULL,          -- e.g. Neuronale Netzwerke
+    slug VARCHAR(255) NOT NULL,           -- e.g. neuronale-netzwerke
     baseline_score FLOAT NOT NULL,
-    -- Time constraints
+    -- Time constraints; IMPORTANT: Both are timestamped (offset from UTC).
     unlock_time TIMESTAMP NOT NULL,
     submission_deadline TIMESTAMP NOT NULL,
     -- Rate limits
