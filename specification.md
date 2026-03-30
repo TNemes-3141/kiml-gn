@@ -1,4 +1,5 @@
 ## Introduction and purpose
+
 The course platform serves as the first "place-to-go" for students (besides the Moodle course) when it comes to matters relating to our course. It features the following main components:
 1. A list of lecture materials, sorted by semester and then by lecture
 2. A list of programming tasks for the current semester, with a submission infrastructure for solutions
@@ -9,10 +10,10 @@ The course platform serves as the first "place-to-go" for students (besides the 
 ## Pages
 Page structure:
 - Home page: `/`
-	- Lecture materials: `/materials`
-	- Programming tasks: `/tasks`
-	- Final submission: `/final-submission`
-	- Profile settings: `/profile`
+    - Lecture materials: `/materials`
+    - Programming tasks: `/tasks`
+    - Final submission: `/final-submission`
+    - Profile settings: `/profile` 
 
 For all subpages, the first element in the main body is a `PageHero` text containing the page title ("Lecture materials", "Programming tasks", etc.)
 
@@ -23,9 +24,9 @@ The entry page of the application consisting of the following parts:
 - Centered `PageHero` text with the title of the course "Einführung in Maschinelles Lernen & Künstliche Intelligenz", with the subtitle "Grünbauer, René; Nemes, Tamás"
 - `Separator` element with a text "Quick access"
 - The main part of the page then consists of a bento-style overview/quick-access board of the different functionalities of the platform. Each box is related to one of the platform functions:
-	- Top row: Lecture materials
-	- Bottom-left: Programming tasks
-	- Bottom-right: Final portfolio submission
+    - Top row: Lecture materials
+    - Bottom-left: Programming tasks
+    - Bottom-right: Final portfolio submission
 - Minimal footer with copyright note and privacy notice (common for all sub-pages; see [[Course platform - Specification#Common footer|Course platform - Specification > Common footer]] for specifics)
 
 The bento-box sections each contain a title, a description, a button taking the user to the route and a compressed preview of the contents of the page (which contents exactly and how they are structured is detailed in the respective page's section). If the user is unauthenticated (see [[Course platform - Specification#Authentication]]), the bento boxes for the programming tasks and the final submission should instead contain a centered lock icon in their content areas, with a text below it that reads "Sign in to access (box name)".
@@ -88,94 +89,85 @@ Semesters table:
 -- When a semester ends, all students associated with a specific semester_id can be deleted.
 -- The latest semester by start_date is considered the current semester.
 CREATE TABLE semesters (
-    id VARCHAR(50) PRIMARY KEY, -- e.g., 'ws2026', 'ss2027'
-    display_name VARCHAR(50) UNIQUE NOT NULL,
-    passing_threshold INTEGER NOT NULL,
-    start_date TEXT NOT NULL -- ISO 8601 date, e.g., '2026-03-15'
+    id VARCHAR(50) PRIMARY KEY, -- e.g., 'ws2026', 'ss2027'
+    display_name VARCHAR(50) UNIQUE NOT NULL,
+    passing_threshold INTEGER NOT NULL,
+    start_date TEXT NOT NULL -- ISO 8601 date, e.g., '2026-03-15'
 );
 ```
 
 Students table:
 ```sql
 CREATE TABLE students (
-    id VARCHAR(50) PRIMARY KEY,           -- A UUID or standard internal ID
-    first_name VARCHAR(50) NOT NULL,
-    last_name VARCHAR(50) NOT NULL,
-    email VARCHAR(255) UNIQUE NOT NULL,
-    public_alias VARCHAR(50) UNIQUE,      -- Displayed on the leaderboard, NULL on default
-    token_hash VARCHAR(255),     -- SHA-256 hash of their access token
-    semester_id VARCHAR(50) NOT NULL,     -- For bulk deletion at semester end
-    
-    -- Final Portfolio Legal & Submission
-    accepted_portfolio_tos BOOLEAN DEFAULT FALSE,
-    portfolio_tos_accepted_at TIMESTAMP,
-    portfolio_video_link TEXT,            -- URL to their video report
-    
-    FOREIGN KEY (semester_id) REFERENCES semesters(id) ON DELETE CASCADE
+    id VARCHAR(50) PRIMARY KEY,           -- A UUID or standard internal ID
+    first_name VARCHAR(50) NOT NULL,
+    last_name VARCHAR(50) NOT NULL,
+    email VARCHAR(255) UNIQUE NOT NULL,
+    public_alias VARCHAR(50) UNIQUE,      -- Displayed on the leaderboard, NULL on default
+    token_hash VARCHAR(255),              -- SHA-256 hash of their access token
+    semester_id VARCHAR(50) NOT NULL,     -- For bulk deletion at semester end
+    first_login_at TIMESTAMP,
+    -- Final Portfolio Legal & Submission
+    accepted_portfolio_tos BOOLEAN DEFAULT FALSE,
+    portfolio_tos_accepted_at TIMESTAMP,
+    portfolio_video_link TEXT,            -- URL to their video report
+    FOREIGN KEY (semester_id) REFERENCES semesters(id) ON DELETE CASCADE
 );
+
+CREATE INDEX idx_students_token_hash ON students(token_hash); -- Make hashes fast to search
 ```
 
 Tasks table: Stores the rules and state of the programming assignments.
 ```sql
 CREATE TABLE tasks (
-    id VARCHAR(50) PRIMARY KEY,
-    serial_num INTEGER NOT NULL,          -- e.g., Task 1, Task 2
-    semester_id VARCHAR(50) NOT NULL,
-    title VARCHAR(255) NOT NULL,
-    baseline_score FLOAT NOT NULL,
-    
-    -- Time constraints
-    unlock_time TIMESTAMP NOT NULL,
-    submission_deadline TIMESTAMP NOT NULL,
-    
-    -- Rate limits
-    max_daily_submissions INTEGER NOT NULL,
-    max_overall_submissions INTEGER NOT NULL,
-    
-    -- Cloudflare R2 pointer for the master solution
-    master_solution_csv_key VARCHAR(255) NOT NULL, 
-    
-    FOREIGN KEY (semester_id) REFERENCES semesters(id) ON DELETE CASCADE
+    id VARCHAR(50) PRIMARY KEY,
+    serial_num INTEGER NOT NULL,          -- e.g., Task 1, Task 2
+    semester_id VARCHAR(50) NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    baseline_score FLOAT NOT NULL,
+    -- Time constraints
+    unlock_time TIMESTAMP NOT NULL,
+    submission_deadline TIMESTAMP NOT NULL,
+    -- Rate limits
+    max_daily_submissions INTEGER NOT NULL,
+    max_overall_submissions INTEGER NOT NULL,
+    -- Cloudflare R2 pointer for the master solution
+    master_solution_csv_key VARCHAR(255) NOT NULL,
+    FOREIGN KEY (semester_id) REFERENCES semesters(id) ON DELETE CASCADE
 );
 ```
 
 Submissions table:
 ```sql
 CREATE TABLE submissions (
-    id VARCHAR(50) PRIMARY KEY,
-    student_id VARCHAR(50) NOT NULL,
-    task_id VARCHAR(50) NOT NULL,
-    
-    submission_serial_num INTEGER NOT NULL, -- e.g., This is the student's 3rd attempt
-    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    score FLOAT,
-    
-    -- Cloudflare R2 pointers for the student's uploaded files (for plagiarism checks)
-    source_code_file_key VARCHAR(255) NOT NULL, -- e.g., 'ws2026/task1/student123_v3.ipynb'
-    student_csv_file_key VARCHAR(255) NOT NULL,
-    
-    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
-    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+    id VARCHAR(50) PRIMARY KEY,
+    student_id VARCHAR(50) NOT NULL,
+    task_id VARCHAR(50) NOT NULL,
+    submission_serial_num INTEGER NOT NULL, -- e.g., This is the student's 3rd attempt
+    submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    score FLOAT,
+    -- Cloudflare R2 pointers for the student's uploaded files (for plagiarism checks)
+    source_code_file_key VARCHAR(255) NOT NULL, -- e.g., 'ws2026/task1/student123_v3.ipynb'
+    student_csv_file_key VARCHAR(255) NOT NULL,
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 );
 ```
 
 Student-task state: Tracks the overarching status of a student for a specific task, including which submission they ultimately selected for their final grade.
 ```sql
 CREATE TABLE student_task_states (
-    student_id VARCHAR(50) NOT NULL,
-    task_id VARCHAR(50) NOT NULL,
-    
-    -- Status enum: 'NOT_COMPLETED', 'PASSED', 'FAILED'
-    status VARCHAR(20) DEFAULT 'NOT_COMPLETED', 
-    
-    -- The specific submission the student chose for their final grade
-    selected_final_submission_id VARCHAR(50),
-    
-    PRIMARY KEY (student_id, task_id),
-    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
-    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
-    -- SET NULL ensures that if a submission is deleted, the state record survives
-    FOREIGN KEY (selected_final_submission_id) REFERENCES submissions(id) ON DELETE SET NULL 
+    student_id VARCHAR(50) NOT NULL,
+    task_id VARCHAR(50) NOT NULL,
+    -- Status enum: 'NOT_COMPLETED', 'PASSED', 'FAILED'
+    status VARCHAR(20) DEFAULT 'NOT_COMPLETED',
+    -- The specific submission the student chose for their final grade
+    selected_final_submission_id VARCHAR(50),
+    PRIMARY KEY (student_id, task_id),
+    FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+    FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE,
+    -- SET NULL ensures that if a submission is deleted, the state record survives
+    FOREIGN KEY (selected_final_submission_id) REFERENCES submissions(id) ON DELETE SET NULL
 );
 ```
 
@@ -188,7 +180,6 @@ A user of the platform is in either of two states: **Authenticated** or **unauth
 - University contact email address
 
 The platform employs a **passwordless, token-based** authentication system for minimal friction and ease of use, while being low cost for the deployer and high security. The system will hereafter be referred to as the **Semester Token** system.
-
 1. At the start of the semester, every student receives an email sent automatically from Brevo containing a unique URL with a secure generated cryptographic token, similar to a PAT.
 2. When they visit this link once, the server side validates the key and sets a secure `HttpOnly` cookie in their browser that lasts for 6 months.
 3. Upon returning to the platform, the platform searches for this cookie and if present and correct, the user is authenticated. If the user clears cookies or switches devices, they have to click the link in the email again.
@@ -203,16 +194,35 @@ Since the cookie is the user's only proof of identity for the whole semester, it
 | `SameSite` | Lax or Strict |
 | `Max-Age`  | 6 months      |
 
+#### First login flow
+The link that will be sent to the user will have the following route:
+```
+https://domain.com/login?token={raw_token}
+```
+
+When the student opens this link, the project platform will do the following steps:
+1. Verify the token's hash against the records in the `students` table of the DB
+2. If there is a match:
+	1. If the `first_login_at` column of the record is not null and older than six months, reject the login attempt.
+3. If the attempt survived:
+	1. Store the cookie with the hash on the device
+	2. Mark the user as authenticated and set the `first_login_at` entry in the student's DB record to the current timestamp
+	3. Redirect to the home page, with a toast message using `useToast()` from NuxtUI saying "Logged in successfully!". The toast should ONLY be visible the one time the user navigates to the `/login` route with the correct token.
+
+The route `/login` should have a fallback mechanism for when no token is given, the token's hash is not matching any in the DB. In this case, redirect to the home page without authenticating the user and display an error message in a toast: "Login failed: Account not found. Refer to the instructions in How to log in at the top of the page." If the login is rejected because of a timeout, the toast should say "Login failed: Your access link has expired."
+
+#### Authentication after first login
+
 ### CMS
 For the lecture materials, task handouts and task descriptions, a CMS via the `@nuxt/content` package is used. The following content is managed by this system and deployed automatically upon push:
 - Objects representing the lecture materials:
-	- List of `(icon, title, link)` objects associated to a semester and lecture unit
-	- Stored in a JSON file inside the repo
+    - List of `(icon, title, link)` objects associated to a semester and lecture unit
+    - Stored in a JSON file inside the repo
 - Task descriptions:
-	- Stored as MD files inside the repo and rendered correctly in the UI (including Latex formulas)
+    - Stored as MD files inside the repo and rendered correctly in the UI (including Latex formulas)
 - Handout ZIP files:
-	- Placed in the `public/` directory
-	- Served upon download request of the user
+    - Placed in the `public/` directory
+    - Served upon download request of the user
 
 ### Deployment and hosting
 **Vercel** is used for deploying and hosting the course platform. It also runs the serverless functions from the `server/api/` route, handling, among other functions, the grading logic (comaring the student's solution CSV against the master CSV and calculating a numerical score). As for the limited timeout of these functions, it is critical that the grading logic and all serverless API functions are implemented efficiently.
@@ -221,13 +231,14 @@ For the lecture materials, task handouts and task descriptions, a CMS via the `@
 ## Styling
 The project platform's UI uses the **NuxtUI** package and its pre-made components. The semantic color scheme is defined in the table below, where a `*` marks a deviation from the standard color palette of NuxtUI:
 
-| Semantic  | Associated Tailwind color |
+| Semantic  | Associated Tailwind color |
 | --------- | ------------------------- |
-| primary   | lime*                     |
-| secondary | sky*                      |
-| success   | green                     |
-| info      | blue                      |
-| warning   | yellow                    |
-| error     | red                       |
-| neutral   | gray*                     |
+| primary   | lime*                     |
+| secondary | sky*                      |
+| success   | green                     |
+| info      | blue                      |
+| warning   | yellow                    |
+| error     | red                       |
+| neutral   | gray*                     |
+
 This color scheme should be set as fixed for the project at the appropriate location.
