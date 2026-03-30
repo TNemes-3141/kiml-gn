@@ -11,13 +11,24 @@ export interface LectureMaterial {
 }
 
 export interface Lecture {
-  slug: string
   title: string
-  subtitle?: string
   icon: string
   order: number
   semesterId: string
+  unlockDateTime: Date
   materials: LectureMaterial[]
+}
+
+export function getLectureSlug(title: string): string {
+  return title
+    .toLowerCase()
+    .replace(/[^a-z0-9 ]/g, '')
+    .trim()
+    .replace(/\s+/g, '-')
+}
+
+export function getLectureDisplayTitle(lecture: Lecture): string {
+  return `Lecture ${lecture.order} - ${lecture.title}`
 }
 
 export const semesters: Semester[] = [
@@ -27,12 +38,11 @@ export const semesters: Semester[] = [
 
 export const lectures: Lecture[] = [
   {
-    slug: 'lineare-regression-logistischer-fehler-klassifikation',
-    title: 'Lecture 1 - Lineare Regression, logistischer Fehler, Klassifikation',
-    subtitle: 'Sommersem. 2026',
+    title: 'Lineare Regression, logistischer Fehler, Klassifikation',
     icon: 'i-lucide-chart-spline',
     order: 1,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-02-16'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/1' },
       { title: 'Ordinary Least Squares (OLS) Demo', link: 'https://example.com/ols-demo' },
@@ -40,122 +50,111 @@ export const lectures: Lecture[] = [
     ]
   },
   {
-    slug: 'perzeptron-biologischer-hintergrund',
-    title: 'Lecture 2 - Perzeptron, biologischer Hintergrund',
-    subtitle: 'Sommersem. 2026',
+    title: 'Perzeptron, biologischer Hintergrund',
     icon: 'i-lucide-sprout',
     order: 2,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-01-23'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/2' }
     ]
   },
   {
-    slug: 'neuronale-netzwerke-backpropagation',
-    title: 'Lecture 3 - Neuronale Netzwerke, Backpropagation',
-    subtitle: 'Sommersem. 2026',
+    title: 'Neuronale Netzwerke, Backpropagation',
     icon: 'i-lucide-brain-circuit',
     order: 3,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-01-30'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/3' }
     ]
   },
   {
-    slug: 'entscheidungsbaeume',
-    title: 'Lecture 4 - Entscheidungsbäume',
-    subtitle: 'Sommersem. 2026',
+    title: 'Entscheidungsbume',
     icon: 'i-lucide-git-fork',
     order: 4,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-02-06'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/4' }
     ]
   },
   {
-    slug: 'q-learning',
-    title: 'Lecture 5 - Q-Learning',
-    subtitle: 'Sommersem. 2026',
+    title: 'Q-Learning',
     icon: 'i-lucide-swords',
     order: 5,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-02-13'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/5' }
     ]
   },
   {
-    slug: 'clustering',
-    title: 'Lecture 6 - Clustering',
-    subtitle: 'Sommersem. 2026',
+    title: 'Clustering',
     icon: 'i-lucide-chart-scatter',
     order: 6,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-02-20'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/6' }
     ]
   },
   {
-    slug: 'fundamentale-konzepte-des-ml',
-    title: 'Lecture 7 - Fundamentale Konzepte des ML',
-    subtitle: 'Sommersem. 2026',
+    title: 'Fundamentale Konzepte des ML',
     icon: 'i-lucide-chart-pie',
     order: 7,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-02-27'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/7' }
     ]
   },
   {
-    slug: 'support-vector-machines',
-    title: 'Lecture 8 - Support Vector Machines',
-    subtitle: 'Sommersem. 2026',
+    title: 'Support Vector Machines',
     icon: 'i-lucide-fold-vertical',
     order: 8,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-03-04'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/8' }
     ]
   },
   {
-    slug: 'convolutional-neural-networks',
-    title: 'Lecture 9 - Convolutional Neural Networks',
-    subtitle: 'Sommersem. 2026',
+    title: 'Convolutional Neural Networks',
     icon: 'i-lucide-scan-eye',
     order: 9,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-03-11'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/9' }
     ]
   },
   {
-    slug: 'generative-ki',
-    title: 'Lecture 10 - Generative KI',
-    subtitle: 'Sommersem. 2026',
+    title: 'Generative KI',
     icon: 'i-lucide-brush',
     order: 10,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-03-18'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/10' }
     ]
   },
   {
-    slug: 'large-language-models',
-    title: 'Lecture 11 - Large Language Models',
-    subtitle: 'Sommersem. 2026',
+    title: 'Large Language Models',
     icon: 'i-lucide-message-square-text',
     order: 11,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-03-25'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/11' }
     ]
   },
   {
-    slug: 'agenten-mcp-a2a',
-    title: 'Lecture 12 - Agenten, MCP/A2A',
-    subtitle: 'Sommersem. 2026',
+    title: 'Agenten, MCP/A2A',
     icon: 'i-lucide-bot',
     order: 12,
     semesterId: 'SS2026',
+    unlockDateTime: new Date('2026-04-01'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/12' }
     ]

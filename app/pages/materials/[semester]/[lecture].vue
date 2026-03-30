@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { lectures, semesters } from '~/data/lectures'
+import { lectures, semesters, getLectureSlug, getLectureDisplayTitle } from '~/data/lectures'
 
 const route = useRoute()
 const toast = useToast()
@@ -9,7 +9,7 @@ const lectureSlug = route.params.lecture as string
 
 const semester = semesters.find(s => s.slug === semesterSlug)
 const lecture = lectures.find(
-  l => l.slug === lectureSlug && semester && l.semesterId === semester.id
+  l => getLectureSlug(l.title) === lectureSlug && semester && l.semesterId === semester.id
 )
 
 if (!semester || !lecture) {
@@ -19,7 +19,7 @@ if (!semester || !lecture) {
 const breadcrumbItems = [
   { label: 'Lecture materials', to: '/materials' },
   { label: semester.displayName },
-  { label: lecture.title }
+  { label: getLectureDisplayTitle(lecture) }
 ]
 
 function openLink(link: string) {

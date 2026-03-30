@@ -1,7 +1,8 @@
 <script setup lang="ts">
-import { lectures, semesters, type Semester } from '~/data/lectures'
+import { lectures, semesters, getLectureSlug, getLectureDisplayTitle, type Semester } from '~/data/lectures'
 
-const currentSemester = (semesters.find(s => s.isCurrent) ?? semesters[0]) ?? { id: "SS2026" }
+const now = new Date()
+const currentSemester = (semesters.find(s => s.isCurrent) ?? semesters[0]) ?? { id: 'SS2026' }
 const selectedSemesterId = ref(currentSemester.id)
 
 const semesterItems = computed(() => {
@@ -20,13 +21,12 @@ const selectedSemester = computed<Semester | undefined>(() =>
 
 const filteredLectures = computed(() =>
   lectures
-    .filter(l => l.semesterId === selectedSemesterId.value)
+    .filter(l => l.semesterId === selectedSemesterId.value && now >= l.unlockDateTime)
     .sort((a, b) => a.order - b.order)
 )
 
-function lecturePath(lecture: { slug: string }) {
-  const semSlug = selectedSemester.value?.slug ?? ''
-  return `/materials/${semSlug}/${lecture.slug}`
+function lecturePath(title: string): string {
+  return `/materials/${selectedSemester.value?.slug ?? ''}/${getLectureSlug(title)}`
 }
 </script>
 
@@ -56,10 +56,10 @@ function lecturePath(lecture: { slug: string }) {
       <UPageGrid>
         <UPageCard
           v-for="lecture in filteredLectures"
-          :key="lecture.slug"
-          :title="lecture.title"
+          :key="lecture.order"
+          :title="getLectureDisplayTitle(lecture)"
           :icon="lecture.icon"
-          :to="lecturePath(lecture)"
+          :to="lecturePath(lecture.title)"
         />
       </UPageGrid>
     </div>
