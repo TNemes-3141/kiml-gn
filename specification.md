@@ -87,7 +87,7 @@ Semesters table:
 ```sql
 -- When a semester ends, all students associated with a specific semester_id can be deleted.
 CREATE TABLE semesters (
-    id VARCHAR(50) PRIMARY KEY, -- e.g., 'WS2026', 'SS2027'
+    id VARCHAR(50) PRIMARY KEY, -- e.g., 'ws2026', 'ss2027'
     display_name VARCHAR(50) UNIQUE NOT NULL,
     passing_threshold INTEGER NOT NULL
 );
