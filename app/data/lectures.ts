@@ -1,8 +1,8 @@
 export interface Semester {
   id: string
-  slug: string
   displayName: string
-  isCurrent: boolean
+  passingThreshold: number
+  startDate: string
 }
 
 export interface LectureMaterial {
@@ -31,17 +31,27 @@ export function getLectureDisplayTitle(lecture: Lecture): string {
   return `Lecture ${lecture.order} - ${lecture.title}`
 }
 
-export const semesters: Semester[] = [
-  { id: 'SS2026', slug: 'sommersem-2026', displayName: 'Sommersem. 2026', isCurrent: true },
-  { id: 'WS2025', slug: 'wintersem-2025', displayName: 'Wintersem. 2025', isCurrent: false }
-]
+/**
+ * Returns only lectures whose semesterId exists in the provided semesters list.
+ * Logs a console.error for any lecture referencing an unknown semester.
+ */
+export function getValidatedLectures(semesters: Semester[]): Lecture[] {
+  const validIds = new Set(semesters.map(s => s.id))
+  return lectures.filter((lecture) => {
+    if (validIds.has(lecture.semesterId)) return true
+    console.error(
+      `[lectures] CRITICAL: Lecture "${lecture.title}" references unknown semester "${lecture.semesterId}" — excluded from display`
+    )
+    return false
+  })
+}
 
 export const lectures: Lecture[] = [
   {
     title: 'Lineare Regression, logistischer Fehler, Klassifikation',
     icon: 'i-lucide-chart-spline',
     order: 1,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-02-16'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/1' },
@@ -53,7 +63,7 @@ export const lectures: Lecture[] = [
     title: 'Perzeptron, biologischer Hintergrund',
     icon: 'i-lucide-sprout',
     order: 2,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-01-23'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/2' }
@@ -63,7 +73,7 @@ export const lectures: Lecture[] = [
     title: 'Neuronale Netzwerke, Backpropagation',
     icon: 'i-lucide-brain-circuit',
     order: 3,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-01-30'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/3' }
@@ -73,7 +83,7 @@ export const lectures: Lecture[] = [
     title: 'Entscheidungsbume',
     icon: 'i-lucide-git-fork',
     order: 4,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-02-06'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/4' }
@@ -83,7 +93,7 @@ export const lectures: Lecture[] = [
     title: 'Q-Learning',
     icon: 'i-lucide-swords',
     order: 5,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-02-13'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/5' }
@@ -93,7 +103,7 @@ export const lectures: Lecture[] = [
     title: 'Clustering',
     icon: 'i-lucide-chart-scatter',
     order: 6,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-02-20'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/6' }
@@ -103,7 +113,7 @@ export const lectures: Lecture[] = [
     title: 'Fundamentale Konzepte des ML',
     icon: 'i-lucide-chart-pie',
     order: 7,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-02-27'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/7' }
@@ -113,7 +123,7 @@ export const lectures: Lecture[] = [
     title: 'Support Vector Machines',
     icon: 'i-lucide-fold-vertical',
     order: 8,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-03-04'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/8' }
@@ -123,7 +133,7 @@ export const lectures: Lecture[] = [
     title: 'Convolutional Neural Networks',
     icon: 'i-lucide-scan-eye',
     order: 9,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-03-11'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/9' }
@@ -133,7 +143,7 @@ export const lectures: Lecture[] = [
     title: 'Generative KI',
     icon: 'i-lucide-brush',
     order: 10,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-03-18'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/10' }
@@ -143,7 +153,7 @@ export const lectures: Lecture[] = [
     title: 'Large Language Models',
     icon: 'i-lucide-message-square-text',
     order: 11,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-03-25'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/11' }
@@ -153,7 +163,7 @@ export const lectures: Lecture[] = [
     title: 'Agenten, MCP/A2A',
     icon: 'i-lucide-bot',
     order: 12,
-    semesterId: 'SS2026',
+    semesterId: 'ss2026',
     unlockDateTime: new Date('2026-04-01'),
     materials: [
       { title: 'Slides', link: 'https://example.com/slides/12' }

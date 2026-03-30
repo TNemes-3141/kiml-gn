@@ -86,10 +86,12 @@ As a database, **SQLite** is used. During development, a local `.db` file is use
 Semesters table:
 ```sql
 -- When a semester ends, all students associated with a specific semester_id can be deleted.
+-- The latest semester by start_date is considered the current semester.
 CREATE TABLE semesters (
     id VARCHAR(50) PRIMARY KEY, -- e.g., 'ws2026', 'ss2027'
     display_name VARCHAR(50) UNIQUE NOT NULL,
-    passing_threshold INTEGER NOT NULL
+    passing_threshold INTEGER NOT NULL,
+    start_date TEXT NOT NULL -- ISO 8601 date, e.g., '2026-03-15'
 );
 ```
 

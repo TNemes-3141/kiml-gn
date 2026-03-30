@@ -5,6 +5,9 @@ export default defineNuxtConfig({
   modules: ['@nuxt/content', '@nuxt/eslint', '@nuxt/ui'],
   colorMode: { preference: 'dark', fallback: 'dark' },
   css: ['~/assets/css/main.css'],
+  nitro: {
+    externals: { inline: ['@libsql/client'] }
+  },
   vite: {
     optimizeDeps: {
       include: [

@@ -1,19 +1,23 @@
 <script setup lang="ts">
-import { lectures, semesters, getLectureSlug, getLectureDisplayTitle } from '~/data/lectures'
+import { getLectureSlug, getLectureDisplayTitle, getValidatedLectures, type Semester } from '~/data/lectures'
+
+const { data: semesters } = await useFetch<Semester[]>('/api/semesters')
 
 const now = new Date()
-const currentSemester = semesters.find(s => s.isCurrent)
+const currentSemester = computed(() => semesters.value?.[0])
 
-const previewLectures = computed(() =>
-  lectures
-    .filter(l => l.semesterId === currentSemester?.id && now >= l.unlockDateTime)
+const previewLectures = computed(() => {
+  const sem = currentSemester.value
+  if (!sem) return []
+  return getValidatedLectures(semesters.value ?? [])
+    .filter(l => l.semesterId === sem.id && now >= l.unlockDateTime)
     .sort((a, b) => b.order - a.order)
     .slice(0, 3)
     .reverse()
-)
+})
 
 function lecturePath(title: string): string {
-  return `/materials/${currentSemester?.slug ?? ''}/${getLectureSlug(title)}`
+  return `/materials/${currentSemester.value?.id ?? ''}/${getLectureSlug(title)}`
 }
 </script>
 

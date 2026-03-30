@@ -1,32 +1,30 @@
 <script setup lang="ts">
-import { lectures, semesters, getLectureSlug, getLectureDisplayTitle, type Semester } from '~/data/lectures'
+import { getLectureSlug, getLectureDisplayTitle, getValidatedLectures, type Semester } from '~/data/lectures'
+
+const { data: semesters } = await useFetch<Semester[]>('/api/semesters')
 
 const now = new Date()
-const currentSemester = (semesters.find(s => s.isCurrent) ?? semesters[0]) ?? { id: 'SS2026' }
-const selectedSemesterId = ref(currentSemester.id)
+const defaultSemesterId = computed(() => semesters.value?.[0]?.id ?? '')
+const selectedSemesterId = ref(defaultSemesterId.value)
 
-const semesterItems = computed(() => {
-  const current = semesters
-    .filter(s => s.isCurrent)
-    .map(s => ({ label: s.displayName, value: s.id }))
-  const previous = semesters
-    .filter(s => !s.isCurrent)
-    .map(s => ({ label: s.displayName, value: s.id }))
-  return [...current, ...previous]
-})
+const validLectures = computed(() => getValidatedLectures(semesters.value ?? []))
 
-const selectedSemester = computed<Semester | undefined>(() =>
-  semesters.find(s => s.id === selectedSemesterId.value)
+const selectedSemester = computed(() =>
+  semesters.value?.find(s => s.id === selectedSemesterId.value)
+)
+
+const semesterItems = computed(() =>
+  (semesters.value ?? []).map(s => ({ label: s.displayName, value: s.id }))
 )
 
 const filteredLectures = computed(() =>
-  lectures
+  validLectures.value
     .filter(l => l.semesterId === selectedSemesterId.value && now >= l.unlockDateTime)
     .sort((a, b) => a.order - b.order)
 )
 
 function lecturePath(title: string): string {
-  return `/materials/${selectedSemester.value?.slug ?? ''}/${getLectureSlug(title)}`
+  return `/materials/${selectedSemester.value?.id ?? ''}/${getLectureSlug(title)}`
 }
 </script>
 
@@ -60,7 +58,6 @@ function lecturePath(title: string): string {
           :title="getLectureDisplayTitle(lecture)"
           :icon="lecture.icon"
           :to="lecturePath(lecture.title)"
-          variant="soft"
         />
       </UPageGrid>
     </div>

@@ -1,26 +1,35 @@
 <script setup lang="ts">
-import { lectures, semesters, getLectureSlug, getLectureDisplayTitle } from '~/data/lectures'
+import { getLectureSlug, getLectureDisplayTitle, getValidatedLectures, type Semester } from '~/data/lectures'
 
 const route = useRoute()
 const toast = useToast()
 
-const semesterSlug = route.params.semester as string
+const { data: semesters } = await useFetch<Semester[]>('/api/semesters')
+
+const semesterId = route.params.semester as string
 const lectureSlug = route.params.lecture as string
 
-const semester = semesters.find(s => s.slug === semesterSlug)
-const lecture = lectures.find(
-  l => getLectureSlug(l.title) === lectureSlug && semester && l.semesterId === semester.id
+const semester = computed(() =>
+  semesters.value?.find(s => s.id === semesterId)
 )
 
-if (!semester || !lecture) {
+const validLectures = computed(() => getValidatedLectures(semesters.value ?? []))
+
+const lecture = computed(() =>
+  validLectures.value.find(
+    l => getLectureSlug(l.title) === lectureSlug && l.semesterId === semesterId
+  )
+)
+
+if (!semester.value || !lecture.value) {
   throw createError({ statusCode: 404, statusMessage: 'Lecture not found' })
 }
 
-const breadcrumbItems = [
+const breadcrumbItems = computed(() => [
   { label: 'Lecture materials', to: '/materials' },
-  { label: semester.displayName },
-  { label: getLectureDisplayTitle(lecture) }
-]
+  { label: semester.value!.displayName },
+  { label: getLectureDisplayTitle(lecture.value!) }
+])
 
 function openLink(link: string) {
   window.open(link, '_blank')
@@ -74,7 +83,7 @@ async function copyLink(link: string) {
       <!-- Materials list -->
       <div class="mt-6 space-y-4">
         <div
-          v-for="material in lecture.materials"
+          v-for="material in lecture!.materials"
           :key="material.title"
           class="flex items-center justify-between rounded-xl bg-elevated/50 p-6"
         >
