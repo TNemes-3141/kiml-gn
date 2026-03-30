@@ -62,6 +62,7 @@ async function copyLink(link: string) {
           icon="i-lucide-arrow-left"
           variant="ghost"
           size="lg"
+          color="neutral"
           square
           to="/materials"
         />
@@ -81,7 +82,7 @@ async function copyLink(link: string) {
             {{ material.title }}
           </p>
 
-          <UButtonGroup>
+          <UFieldGroup>
             <UButton
               color="secondary"
               @click="openLink(material.link)"
@@ -91,9 +92,10 @@ async function copyLink(link: string) {
             <UButton
               variant="outline"
               icon="i-lucide-clipboard-copy"
+              color="neutral"
               @click="copyLink(material.link)"
             />
-          </UButtonGroup>
+          </UFieldGroup>
         </div>
       </div>
     </div>
