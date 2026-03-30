@@ -46,11 +46,12 @@ const footerLinks = [
 
       <template #right>
         <template v-if="isAuthenticated">
-          <span class="text-sm">
+          <span class="text-sm mr-5">
             Hello, <strong>{{ user?.firstName }}</strong>!
           </span>
           <UButton
-            variant="soft"
+            variant="solid"
+            color="neutral"
             to="/profile"
           >
             Profile settings

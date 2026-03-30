@@ -104,7 +104,7 @@ CREATE TABLE students (
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     public_alias VARCHAR(50) UNIQUE,      -- Displayed on the leaderboard, NULL on default
-    token_hash VARCHAR(255),              -- SHA-256 hash of their access token
+    token_hash VARCHAR(255),              -- SHA-256 hash of their access token, NULL if not logged in yet
     semester_id VARCHAR(50) NOT NULL,     -- For bulk deletion at semester end
     first_login_at TIMESTAMP,
     -- Final Portfolio Legal & Submission
