@@ -103,7 +103,7 @@ CREATE TABLE students (
     last_name VARCHAR(50) NOT NULL,
     email VARCHAR(255) UNIQUE NOT NULL,
     public_alias VARCHAR(50) UNIQUE,      -- Displayed on the leaderboard, NULL on default
-    token_hash VARCHAR(255) NOT NULL,     -- SHA-256 hash of their access token
+    token_hash VARCHAR(255),     -- SHA-256 hash of their access token
     semester_id VARCHAR(50) NOT NULL,     -- For bulk deletion at semester end
     
     -- Final Portfolio Legal & Submission
@@ -181,6 +181,7 @@ CREATE TABLE student_task_states (
 
 #### Implementation notes
 - **Daily submissions reset:** There are upper limits for both daily and overall submissions for programming tasks. Whether a submission is surpassing any limit is computed on-the-fly. When a user submits, query the database: `SELECT COUNT(*) FROM submissions WHERE student_id = ? AND task_id = ? AND date >= CURRENT_DATE`. If it's `>= max_daily_submissions`, reject it.
+
 ### Authentication
 A user of the platform is in either of two states: **Authenticated** or **unauthenticated**. Data associated with an authenticated user:
 - Full name
