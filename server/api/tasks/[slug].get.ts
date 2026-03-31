@@ -7,7 +7,7 @@ export default defineEventHandler(async (event) => {
   const db = useDB()
 
   const result = await db.execute({
-    sql: 'SELECT id, serial_num, title, slug, baseline_score, unlock_time, submission_deadline, online_editor_link FROM tasks WHERE slug = ?',
+    sql: 'SELECT id, serial_num, title, slug, baseline_score, unlock_time, submission_deadline, online_editor_link, max_daily_submissions, max_overall_submissions FROM tasks WHERE slug = ?',
     args: [slug]
   })
 
@@ -24,6 +24,8 @@ export default defineEventHandler(async (event) => {
     baselineScore: Number(task.baseline_score),
     unlockTime: task.unlock_time as string,
     submissionDeadline: task.submission_deadline as string,
-    onlineEditorLink: task.online_editor_link as string
+    onlineEditorLink: task.online_editor_link as string,
+    maxDailySubmissions: Number(task.max_daily_submissions),
+    maxOverallSubmissions: Number(task.max_overall_submissions)
   }
 })

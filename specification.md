@@ -100,7 +100,7 @@ The task overview list shows all task records of the current semester as a card 
 - At the bottom right, an "Open" button with a right arrow icon (color: `neutral`, variant: `solid`) is placed. When pressed, it redirects to the `/tasks/[task-slug]/details` page. If the task is not unlocked yet, the button is disabled.
 
 #### Task details: `/tasks/[task-slug]/details`
-Frame in Figma: `/tasks/neuronale-netzwerke/details`
+Frame in Figma: `/tasks/task-1-neuronale-netzwerke/details`
 From top to bottom:
 - `UHero` text with composed string: Substitute "Task #(a): (b)" with `serial_num` for (a) and `title` for (b)
 - `UStepper` component that shows the current sub-page for the task: "Task details" (current), "Solution and leaderboard", and "Submit". This component is common between all task sub-pages and can be used to navigate between this, the `/solution` and the `/submission` routes.
@@ -109,10 +109,21 @@ From top to bottom:
 - Card titled "Task materials" with two buttons stretching the entire width of the card: "Download handout files" with `i-lucide-file-archive` icon, which downloads the ZIP file with the name `[task-slug].md` from the `public/handouts/` directory, and "Edit online in Google Colab" with `i-lucide-globe` icon, opening the link in the task's `online_editor_link` record in a new tab.
 
 #### Solution and leaderboard: `/tasks/[task-slug]/solution`
-Frame in Figma: `/tasks/neuronale-netzwerke/solution`
+Frame in Figma: `/tasks/task-1-neuronale-netzwerke/solution`
+Content area from top to bottom:
+- **Stats area:**
+	- Progress bar (color `secondary`) with the label "Limit for uploaded solutions today (resets at 23:59:59):" and in bold the progress marker as text: "(x) / (y)" where (x)=count of records in the `submissions` table with `student_id`== current student, `task_id` == current task and `submitted_at` is in the current date, and (y)=`max_daily_submissions` of the task
+	- Progress bar (color `secondary`) with the label "Limit for uploaded solutions in total:" and in bold the progress marker as text: "(x) / (y)" where (x)=count of records in the `submissions` table with `student_id`== current student and `task_id` == current task, and (y)=`max_overall_submissions` of the task
+	- A label "Baseline to beat:" and below the `baseline_score` of the task in big bold letters
+- **Solution area:** Two `UPageCard` components next to each other where "Solution submission" takes up a third of the width, and "Your solution" takes up two thirds of the width. If the screen gets too narrow: Render below instead of next to each other. These two cards should have the same height if rendered next to each other and are **not rendered if the task deadline has passed.** In this case, a card with the text "Task is closed; no more solution uploads are allowed." is displayed instead.
+	- "Solution submission": Submission form with form verification. All fields are mandatory. Description "Upload your solution file (generated predictions) and your source code and press "Make a submission".". Two file upload fields: One for the solution file that only takes CSV files (the form should verify this), and one for the source code file that only takes .py or .ipynb files (this should also be verified). The text input field "Public alias for leaderboard" with the description "(Caution: You can only choose this once!)" is only shown if the `public_alias` of the student's record is NULL. Use NuxtUI form components and form verification via Zod. Before allowing the submission of the form, when the public alias is chosen for the first time, verify via DB query that it is unique, and reject the submission if it's not. If the form is valid and all fields are complete, update the `students` record with the `public_alias` if it was given, and the `submissions` table with the current submission. For now, set the `score` field to a random number between 0.0 and 1.0 for demo purposes. Note that during development, the submitted files need to be saved locally, whereas in deployment (if the API key is given), the files need to be uploaded to R2. Implement this architecture. 
+	- "Your solutions": `UTable` component with pagination, showing the records in the `submissions` table where `student_id` == current student. Colums are "Number" (`submission_serial_num`), "Date and time" (`submitted_at`, formatted), "Score" (`score`) and "Passes baseline" (shows green `UBadge` if `score` of the submission greater than or equal to the `baseline_score` of the task, red `UBadge` otherwise). For an example code with paginated tables, see https://ui.nuxt.com/docs/components/table at the "With pagination" section.
+- **Leaderboard:** Full-width `UPageCard` with `i-lucide-trophy` icon in `primary` color, containing a `UTable` displaying the best submissions. The data is pulled from the `submissions` DB record, filtered for the `task_id`, ordered by `score` in decreasing order and only keeping one best-scoring submission from each individual student. Before displaying the leaderboard, the students are anonymized by removing `student_id` and replacing it with their `public_alias` from the `students` table. When implementing this, figure out a way to optimize this to be as fast and with as little number of requests as possible, e.g. by creating a view on a JOIN. Three columns: "Rank" (numerical integer rank, with #1 for best), "Name" (`public_alias`) and "Score" (`score` float, this column sticks to the right end of the table). The table should not be scrollable and can take up as much vertical space as it needs.
+
+All tables should reflect the current state accurately, e.g., need to refresh when the student makes a submission. The leaderboard table does not need to refresh on its own, in regular intervals or similar; only if the student makes a new submission, hard-reloads the page or navigates to a different step using the stepper and then back.
 
 #### Submit: `/tasks/[task-slug]/submission`
-Frame in Figma: `/tasks/neuronale-netzwerke/submission`
+Frame in Figma: `/tasks/task-1-neuronale-netzwerke/submission`
 
 ### Final report page
 Route: `/final-submission`

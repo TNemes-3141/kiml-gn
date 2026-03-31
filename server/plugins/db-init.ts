@@ -50,6 +50,21 @@ export default defineNitroPlugin(async () => {
   `)
 
   await db.execute(`
+    CREATE TABLE IF NOT EXISTS submissions (
+      id VARCHAR(50) PRIMARY KEY,
+      student_id VARCHAR(50) NOT NULL,
+      task_id VARCHAR(50) NOT NULL,
+      submission_serial_num INTEGER NOT NULL,
+      submitted_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+      score FLOAT,
+      source_code_file_key VARCHAR(255) NOT NULL,
+      student_csv_file_key VARCHAR(255) NOT NULL,
+      FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
+      FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
+    )
+  `)
+
+  await db.execute(`
     CREATE TABLE IF NOT EXISTS student_task_states (
       student_id VARCHAR(50) NOT NULL,
       task_id VARCHAR(50) NOT NULL,

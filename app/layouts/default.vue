@@ -46,7 +46,7 @@ const footerLinks = [
 
       <template #right>
         <template v-if="isAuthenticated">
-          <span class="text-sm mr-5">
+          <span class="text-sm mr-3">
             Hello, <strong>{{ user?.firstName }}</strong>!
           </span>
           <UButton
@@ -58,7 +58,7 @@ const footerLinks = [
           </UButton>
         </template>
         <template v-else>
-          <span class="text-sm text-muted mr-5">Not signed in</span>
+          <span class="text-sm text-muted mr-3">Not signed in</span>
           <UButton
             color="primary"
             @click="showLoginHelp = true"
