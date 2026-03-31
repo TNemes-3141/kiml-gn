@@ -44,6 +44,7 @@ export default defineNitroPlugin(async () => {
       max_daily_submissions INTEGER NOT NULL,
       max_overall_submissions INTEGER NOT NULL,
       master_solution_csv_key VARCHAR(255) NOT NULL,
+      online_editor_link TEXT NOT NULL UNIQUE,
       FOREIGN KEY (semester_id) REFERENCES semesters(id) ON DELETE CASCADE
     )
   `)
@@ -82,14 +83,14 @@ export default defineNitroPlugin(async () => {
   const tasksCount = Number(tasksResult.rows[0]!.count)
   if (tasksCount === 0) {
     await db.execute({
-      sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: ['task-1', 1, 'ss2026', 'Neuronale Netzwerke', 'neuronale-netzwerke', 0.1, '2026-03-29T08:00:00+02:00', '2026-07-29T08:00:00+02:00', 20, 100, 'placeholder/task1_master.csv']
+      sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key, online_editor_link)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: ['task-1', 1, 'ss2026', 'Neuronale Netzwerke', 'neuronale-netzwerke', 0.1, '2026-03-29T08:00:00+02:00', '2026-07-29T08:00:00+02:00', 20, 100, 'task1_example_master.csv', 'https://colab.research.google.com/drive/example-task-1']
     })
     await db.execute({
-      sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: ['task-2', 2, 'ss2026', 'Entscheidungsbäume', 'entscheidungsbaeume', 0.2, '2026-04-15T16:00:00+02:00', '2026-04-17T16:00:00+02:00', 20, 100, 'placeholder/task2_master.csv']
+      sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key, online_editor_link)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+      args: ['task-2', 2, 'ss2026', 'Entscheidungsbäume', 'entscheidungsbaeume', 0.2, '2026-04-15T16:00:00+02:00', '2026-04-17T16:00:00+02:00', 20, 100, 'task2_example_master.csv', 'https://colab.research.google.com/drive/example-task-2']
     })
   }
 

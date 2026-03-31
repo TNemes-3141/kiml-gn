@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
 
   // Get all tasks for current semester
   const tasksResult = await db.execute({
-    sql: 'SELECT id, serial_num, title, slug, unlock_time, submission_deadline FROM tasks WHERE semester_id = ? ORDER BY serial_num ASC',
+    sql: 'SELECT id, serial_num, title, slug, unlock_time, submission_deadline, online_editor_link FROM tasks WHERE semester_id = ? ORDER BY serial_num ASC',
     args: [semester.id as string]
   })
 
@@ -54,6 +54,7 @@ export default defineEventHandler(async (event) => {
     slug: task.slug as string,
     unlockTime: task.unlock_time as string,
     submissionDeadline: task.submission_deadline as string,
+    onlineEditorLink: task.online_editor_link as string,
     status: taskStates[task.id as string] ?? 'NOT_COMPLETED'
   }))
 

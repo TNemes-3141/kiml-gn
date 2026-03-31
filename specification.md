@@ -100,13 +100,19 @@ The task overview list shows all task records of the current semester as a card 
 - At the bottom right, an "Open" button with a right arrow icon (color: `neutral`, variant: `solid`) is placed. When pressed, it redirects to the `/tasks/[task-slug]/details` page. If the task is not unlocked yet, the button is disabled.
 
 #### Task details: `/tasks/[task-slug]/details`
-Frame in Figma: `/tasks/task-1-neuronale-netzwerke/details`
+Frame in Figma: `/tasks/neuronale-netzwerke/details`
+From top to bottom:
+- `UHero` text with composed string: Substitute "Task #(a): (b)" with `serial_num` for (a) and `title` for (b)
+- `UStepper` component that shows the current sub-page for the task: "Task details" (current), "Solution and leaderboard", and "Submit". This component is common between all task sub-pages and can be used to navigate between this, the `/solution` and the `/submission` routes.
+- Another component for navigation: "Previous" and "Next" buttons (color: `neutral`, variant: `soft`) with arrow icons. In this route, only the "Next" button is shown, which navigates to `/solution`.
+- Card (variant: `soft`) titled "Task description" and containing the rendered Markdown of the task description (see [[CMS > Task description files]] for implementation details). The filename will be `[task-slug].md`.
+- Card titled "Task materials" with two buttons stretching the entire width of the card: "Download handout files" with `i-lucide-file-archive` icon, which downloads the ZIP file with the name `[task-slug].md` from the `public/handouts/` directory, and "Edit online in Google Colab" with `i-lucide-globe` icon, opening the link in the task's `online_editor_link` record in a new tab.
 
 #### Solution and leaderboard: `/tasks/[task-slug]/solution`
-Frame in Figma: `/tasks/task-1-neuronale-netzwerke/solution
+Frame in Figma: `/tasks/neuronale-netzwerke/solution`
 
-#### Submit: ``/tasks/[task-slug]/submission`
-Frame in Figma: `/tasks/task-1-neuronale-netzwerke/submission`
+#### Submit: `/tasks/[task-slug]/submission`
+Frame in Figma: `/tasks/neuronale-netzwerke/submission`
 
 ### Final report page
 Route: `/final-submission`
@@ -173,6 +179,7 @@ CREATE TABLE tasks (
     max_overall_submissions INTEGER NOT NULL,
     -- Cloudflare R2 pointer for the master solution
     master_solution_csv_key VARCHAR(255) NOT NULL,
+    online_editor_link TEXT NOT NULL UNIQUE,
     FOREIGN KEY (semester_id) REFERENCES semesters(id) ON DELETE CASCADE
 );
 ```

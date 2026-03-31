@@ -18,6 +18,7 @@ interface TasksData {
     slug: string
     unlockTime: string
     submissionDeadline: string
+    onlineEditorLink: string
     status: string
   }>
 }
