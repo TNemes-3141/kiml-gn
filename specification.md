@@ -257,15 +257,80 @@ The route `/login` should have a fallback mechanism for when no token is given, 
 For the lecture materials, task handouts and task descriptions, a CMS via the `@nuxt/content` package is used. The following content is managed by this system and deployed automatically upon push:
 - Objects representing the lecture materials:
     - List of `(icon, title, link)` objects associated to a semester and lecture unit
-    - Stored in a JSON file inside the repo
+    - Stored in a TS file inside the repo
 - Task descriptions:
     - Stored as MD files inside the repo and rendered correctly in the UI (including Latex formulas)
-- Handout ZIP files:
-    - Placed in the `public/` directory
-    - Served upon download request of the user
+- Placed in the `public/` directory (e.g. `public/handouts/task-1.zip`)
+    - Served as static files at their public path (e.g. `/handouts/task-1.zip`)
+
+#### Task description files
+Task descriptions are stored as Markdown files in `content/tasks/` at the project root, one per task. Each file uses YAML frontmatter with `title` and `slug` fields, where `slug` matches the task's `slug` column in the database:
+
+```
+content/
+  tasks/
+    neuronale-netzwerke.md
+    entscheidungsbaeume.md
+```
+
+**Querying and rendering:** In a page component, use `queryCollection` to fetch the parsed content by slug, and `<ContentRenderer>` to render it:
+```vue
+<script setup lang="ts">
+// The slug comes from the route parameter, e.g. /tasks/neuronale-netzwerke/details
+const route = useRoute()
+const { data: description } = await useAsyncData(() =>
+  queryCollection('content').path(`/tasks/${route.params.slug}`).first()
+)
+</script>
+
+<template>
+  <ContentRenderer v-if="description" :value="description" />
+</template>
+```
+
+Raw `.md` source files are never exposed to the client. Nuxt Content compiles them at build time and serves only the parsed AST through its internal API.
+
+### Solution checking
+The platform grades student submissions by comparing the student's uploaded CSV against a **master solution CSV** for each task. The `tasks` table contains a `master_solution_csv_key` column that points to the file.
+
+#### Storage
+| Environment   | Storage location      | `master_solution_csv_key` value          |
+| ------------- | --------------------- | ---------------------------------------- |
+| Development   | `server/assets/solutions/` (bundled with Nitro, not publicly accessible) | Filename, e.g. `task1_example_master.csv` |
+| Production    | Cloudflare R2 bucket (private) | R2 object key, e.g. `ss2026/task1_master.csv` |
+
+**Development layout:**
+```
+server/
+  assets/
+    solutions/
+      task1_example_master.csv
+      task2_example_master.csv
+```
+
+#### Reading the master solution in an API route
+Use Nitro's storage API for local development and the R2 SDK for production. Example pattern:
+
+```ts
+async function getMasterSolution(csvKey: string): Promise<string> {
+  const r2Url = process.env.R2_BUCKET_URL
+  if (r2Url) {
+    // Production: fetch from Cloudflare R2
+    const response = await fetch(`${r2Url}/${csvKey}`)
+    return await response.text()
+  }
+  // Development: read from server/assets/solutions/
+  const storage = useStorage('assets:server')
+  const content = await storage.getItem(`solutions/${csvKey}`)
+  if (!content) throw createError({ statusCode: 500, message: `Master solution not found: ${csvKey}` })
+  return content as string
+}
+```
+
+The grading API route (to be implemented) will call this function, parse both CSVs, and compute a numerical score (e.g. accuracy or F1-score depending on the task).
 
 ### Deployment and hosting
-**Vercel** is used for deploying and hosting the course platform. It also runs the serverless functions from the `server/api/` route, handling, among other functions, the grading logic (comaring the student's solution CSV against the master CSV and calculating a numerical score). As for the limited timeout of these functions, it is critical that the grading logic and all serverless API functions are implemented efficiently.
+**Vercel** is used for deploying and hosting the course platform. It also runs the serverless functions from the `server/api/` route.
 
 ---
 ## Styling
