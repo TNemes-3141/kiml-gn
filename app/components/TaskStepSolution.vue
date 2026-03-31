@@ -32,6 +32,17 @@ interface Submission {
 
 const { data: submissionsData, refresh: refreshSubmissions } = await useFetch<{ submissions: Submission[] }>(`/api/tasks/${props.task.slug}/submissions`)
 
+interface LeaderboardEntry {
+  rank: number
+  name: string
+  score: number
+  isCurrentStudent: boolean
+}
+
+const { data: leaderboardData, refresh: refreshLeaderboard } = await useFetch<{ entries: LeaderboardEntry[] }>(`/api/tasks/${props.task.slug}/leaderboard`)
+
+const leaderboard = computed(() => leaderboardData.value?.entries ?? [])
+
 const submissions = computed(() => submissionsData.value?.submissions ?? [])
 
 const submissionsTable = useTemplateRef('submissionsTable')
@@ -73,6 +84,25 @@ const submissionColumns: TableColumn<Submission>[] = [
     header: 'Passes baseline?',
     meta: { class: { th: 'text-right', td: 'text-right' } },
     accessorKey: 'score'
+  }
+]
+
+const leaderboardColumns: TableColumn<LeaderboardEntry>[] = [
+  {
+    accessorKey: 'rank',
+    header: '#',
+    cell: ({ row }) => `# ${row.getValue('rank')}`
+  },
+  {
+    accessorKey: 'name',
+    header: 'Name',
+    meta: { class: { th: 'w-full', td: 'w-full' } }
+  },
+  {
+    accessorKey: 'score',
+    header: 'Score',
+    meta: { class: { th: 'text-right', td: 'text-right' } },
+    cell: ({ row }) => (row.getValue('score') as number).toFixed(3)
   }
 ]
 
@@ -134,7 +164,7 @@ async function onSubmit(event: FormSubmitEvent<{ solutionFile: File, sourceCodeF
     state.publicAlias = ''
 
     // Refresh data
-    await Promise.all([refreshStats(), refreshStudentInfo(), refreshSubmissions()])
+    await Promise.all([refreshStats(), refreshStudentInfo(), refreshSubmissions(), refreshLeaderboard()])
     emit('submitted')
   }
   catch (err: unknown) {
@@ -294,7 +324,7 @@ function clearForm() {
       </p>
     </UPageCard>
 
-    <!-- Leaderboard placeholder -->
+    <!-- Leaderboard -->
     <UPageCard variant="soft">
       <template #icon>
         <UIcon name="i-lucide-trophy" class="text-primary-400" />
@@ -302,9 +332,16 @@ function clearForm() {
       <template #title>
         Leaderboard
       </template>
-      <p class="text-neutral-400">
-        This section is not yet implemented.
-      </p>
+
+      <UTable
+        :data="leaderboard"
+        :columns="leaderboardColumns"
+        :meta="{
+          class: {
+            tr: (row: any) => row.original.isCurrentStudent ? 'bg-secondary-500/20' : ''
+          }
+        }"
+      />
     </UPageCard>
   </div>
 </template>

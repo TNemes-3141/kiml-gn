@@ -76,6 +76,19 @@ export default defineNitroPlugin(async () => {
     )
   `)
 
+  await db.execute(`
+    CREATE VIEW IF NOT EXISTS leaderboard AS
+    SELECT
+      sub.task_id,
+      sub.student_id,
+      s.public_alias,
+      MAX(sub.score) AS best_score
+    FROM submissions sub
+    JOIN students s ON s.id = sub.student_id
+    WHERE sub.score IS NOT NULL
+    GROUP BY sub.task_id, sub.student_id
+  `)
+
   const semestersResult = await db.execute('SELECT COUNT(*) as count FROM semesters')
   const semestersCount = Number(semestersResult.rows[0]!.count)
   if (semestersCount === 0) {
