@@ -24,6 +24,8 @@ const statusDisplay = computed(() => {
       return { label: 'Passed', color: 'success' as const, variant: 'subtle' as const }
     case 'FAILED':
       return { label: 'Failed', color: 'error' as const, variant: 'subtle' as const }
+    case 'COMPLETED':
+      return { label: 'Completed', color: 'info' as const, variant: 'subtle' as const }
     default:
       return { label: 'Not completed', color: 'warning' as const, variant: 'subtle' as const }
   }

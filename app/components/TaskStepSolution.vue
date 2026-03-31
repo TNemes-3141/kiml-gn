@@ -46,7 +46,7 @@ const leaderboard = computed(() => leaderboardData.value?.entries ?? [])
 const submissions = computed(() => submissionsData.value?.submissions ?? [])
 
 const submissionsTable = useTemplateRef('submissionsTable')
-const pagination = ref({ pageIndex: 0, pageSize: 4 })
+const pagination = ref({ pageIndex: 0, pageSize: 5 })
 
 const submissionColumns: TableColumn<Submission>[] = [
   {

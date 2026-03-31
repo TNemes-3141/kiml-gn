@@ -217,7 +217,7 @@ Student-task state: Tracks the overarching status of a student for a specific ta
 CREATE TABLE student_task_states (
     student_id VARCHAR(50) NOT NULL,
     task_id VARCHAR(50) NOT NULL,
-    -- Status enum: 'NOT_COMPLETED', 'PASSED', 'FAILED'
+    -- Status enum: 'NOT_COMPLETED', 'COMPLETED', 'PASSED', 'FAILED'
     status VARCHAR(20) DEFAULT 'NOT_COMPLETED',
     -- The specific submission the student chose for their final grade
     selected_final_submission_id VARCHAR(50),
