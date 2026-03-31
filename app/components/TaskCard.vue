@@ -29,7 +29,7 @@ const statusDisplay = computed(() => {
   }
 })
 
-const detailsPath = computed(() => `/tasks/${props.task.slug}/details`)
+const detailsPath = computed(() => `/tasks/${props.task.slug}`)
 
 function formatDateTime(isoString: string): string {
   const date = new Date(isoString)

@@ -16,7 +16,10 @@
     "@nuxt/ui": "^4.6.0",
     "better-sqlite3": "^12.8.0",
     "eslint": "^9.35.0",
+    "katex": "^0.16.44",
     "nuxt": "^4.1.1",
+    "rehype-katex": "^7.0.1",
+    "remark-math": "^6.0.0",
     "typescript": "^5.9.2",
     "vue": "^3.5.20",
     "vue-router": "^4.5.1"

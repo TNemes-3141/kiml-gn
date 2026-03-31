@@ -3,8 +3,6 @@ title: "Task #1: Neuronale Netzwerke"
 slug: neuronale-netzwerke
 ---
 
-## Objective
-
 In this task, you will implement a simple feedforward neural network from scratch using only **NumPy**. Your network must learn to classify samples from the provided dataset by minimising the cross-entropy loss.
 
 ## Background
