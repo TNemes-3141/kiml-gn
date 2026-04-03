@@ -23,4 +23,5 @@ logs
 .env.*
 !.env.example
 
-# Documentation files for AI
+# Solution files
+solutions/

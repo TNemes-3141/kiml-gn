@@ -1,5 +1,11 @@
 <script setup lang="ts">
 const open = defineModel<boolean>('open', { default: false })
+const { demoLogin } = useAuth()
+
+async function handleDemoLogin() {
+  await demoLogin()
+  open.value = false
+}
 </script>
 
 <template>
@@ -22,7 +28,7 @@ const open = defineModel<boolean>('open', { default: false })
     </template>
     <template #footer>
       <div class="flex w-full justify-center">
-        <UButton color="primary">
+        <UButton color="primary" @click="handleDemoLogin">
           Sign in (demo)
         </UButton>
       </div>

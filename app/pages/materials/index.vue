@@ -58,6 +58,7 @@ function lecturePath(title: string): string {
           :title="getLectureDisplayTitle(lecture)"
           :icon="lecture.icon"
           :to="lecturePath(lecture.title)"
+          variant="soft"
         />
       </UPageGrid>
     </div>

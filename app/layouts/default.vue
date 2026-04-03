@@ -6,7 +6,7 @@ const authenticatedLinks = [
   [
     { label: 'Lecture materials', to: '/materials' },
     { label: 'Programming tasks', to: '/tasks' },
-    { label: 'Portfolio', to: '/final-submission' }
+    { label: 'Portfolio', to: '/portfolio' }
   ]
 ]
 
@@ -46,18 +46,12 @@ const footerLinks = [
 
       <template #right>
         <template v-if="isAuthenticated">
-          <span class="text-sm">
+          <span class="text-sm mr-3">
             Hello, <strong>{{ user?.firstName }}</strong>!
           </span>
-          <UButton
-            variant="soft"
-            to="/profile"
-          >
-            Profile settings
-          </UButton>
         </template>
         <template v-else>
-          <span class="text-sm text-muted mr-5">Not signed in</span>
+          <span class="text-sm text-muted mr-3">Not signed in</span>
           <UButton
             color="primary"
             @click="showLoginHelp = true"

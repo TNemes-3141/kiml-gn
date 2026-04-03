@@ -16,7 +16,7 @@ export default defineAppConfig({
         wrapper: '',
         header: '',
         headline: 'mb-4',
-        title: 'text-5xl sm:text-7xl text-pretty tracking-tight font-bold text-highlighted',
+        title: 'text-4xl sm:text-6xl text-pretty tracking-tight font-bold text-highlighted',
         description: 'text-lg sm:text-xl/8 text-muted',
         body: 'mt-10',
         footer: 'mt-10',
