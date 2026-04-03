@@ -1,9 +1,29 @@
 <script setup lang="ts">
-defineProps<{ isAuthenticated: boolean }>()
+const props = defineProps<{ isAuthenticated: boolean }>()
+
+const { data: tasksData } = await useFetch<{
+  passedCount: number
+  semester: { passingThreshold: number } | null
+}>('/api/tasks')
+
+const { data: portfolioData } = await useFetch<{
+  videoLink: string | null
+}>('/api/portfolio', { immediate: props.isAuthenticated })
+
+const passingThreshold = computed(() => tasksData.value?.semester?.passingThreshold ?? 0)
+const passedCount = computed(() => tasksData.value?.passedCount ?? 0)
+const videoSubmitted = computed(() => portfolioData.value?.videoLink ? 1 : 0)
+
+// Total = passingThreshold + 1 (1 for video), current = passed tasks + video submitted
+const totalSteps = computed(() => passingThreshold.value + 1)
+const completedSteps = computed(() => passedCount.value + videoSubmitted.value)
+const overallPercent = computed(() =>
+  totalSteps.value > 0 ? Math.round((completedSteps.value / totalSteps.value) * 100) : 0
+)
 </script>
 
 <template>
-  <div class="col-span-1 flex min-h-80 flex-col rounded-xl border border-secondary-500/20 bg-secondary-500/5 p-6">
+  <div class="col-span-1 flex flex-col rounded-xl border border-secondary-500/20 bg-secondary-500/5 p-6">
     <h3 class="text-base font-semibold">
       Your portfolio
     </h3>
@@ -12,12 +32,39 @@ defineProps<{ isAuthenticated: boolean }>()
     </p>
 
     <template v-if="isAuthenticated">
-      <div class="mt-4 flex-1">
-        <p class="text-sm text-muted">
-          Portfolio progress will appear here.
+      <div class="mt-4 flex flex-1 flex-col justify-center gap-4">
+        <!-- Big percentage -->
+        <p class="text-center text-5xl font-bold text-white">
+          {{ overallPercent }}%
         </p>
+
+        <!-- Programming tasks progress -->
+        <div>
+          <UProgress
+            :model-value="passedCount"
+            :max="passingThreshold || 1"
+            color="secondary"
+            size="md"
+          />
+          <p class="mt-1 text-sm text-muted">
+            Programming tasks passed
+          </p>
+        </div>
+
+        <!-- Video submission progress -->
+        <div>
+          <UProgress
+            :model-value="videoSubmitted"
+            :max="1"
+            color="secondary"
+            size="md"
+          />
+          <p class="mt-1 text-sm text-muted">
+            Video report URL submitted
+          </p>
+        </div>
       </div>
-      <div class="flex justify-end">
+      <div class="mt-4 flex justify-end">
         <UButton
           icon="i-lucide-chevron-right"
           color="secondary"
