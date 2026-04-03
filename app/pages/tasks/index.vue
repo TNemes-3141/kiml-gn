@@ -75,23 +75,12 @@ function dismissInfoPermanently() {
       </div>
 
       <!-- Progress section -->
-      <div>
-        <p class="mb-1 text-base text-white">
-          Tasks passed:
-        </p>
-        <div class="flex items-center gap-4">
-          <UProgress
-            :model-value="data?.passedCount ?? 0"
-            :max="data?.semester?.passingThreshold ?? 1"
-            color="primary"
-            size="lg"
-            class="flex-1"
-          />
-          <span class="text-2xl font-bold text-white">
-            {{ data?.passedCount ?? 0 }} / {{ data?.semester?.passingThreshold ?? 0 }}
-          </span>
-        </div>
-      </div>
+      <ProgressIndicator
+        label="Tasks passed:"
+        :value="data?.passedCount ?? 0"
+        :max="data?.semester?.passingThreshold ?? 1"
+        color="primary"
+      />
 
       <!-- Task overview heading -->
       <h1 class="mb-6 mt-10 text-4xl font-bold">

@@ -159,30 +159,18 @@ async function onSubmit() {
     </div>
 
     <!-- Status card -->
-    <div
+    <StatusCard
       v-if="hasSubmitted"
-      class="rounded-[10px] bg-success-500/20 p-6"
-    >
-      <UIcon name="i-lucide-check" class="mb-2 size-5 text-success-400" />
-      <p class="font-semibold text-success-400">
-        Status
-      </p>
-      <p class="text-[15px] leading-6 text-success-300">
-        You have finished submitting your solution and your submission was received.
-      </p>
-    </div>
-    <div
+      state="success"
+      title="Status"
+      message="You have finished submitting your solution and your submission was received."
+    />
+    <StatusCard
       v-else
-      class="rounded-[10px] bg-error-500/20 p-6"
-    >
-      <UIcon name="i-lucide-octagon-alert" class="mb-2 size-5 text-error-400" />
-      <p class="font-semibold text-error-400">
-        Status
-      </p>
-      <p class="text-[15px] leading-6 text-error-300">
-        You have not finished submitting your solution yet and would currently fail the task.
-      </p>
-    </div>
+      state="error"
+      title="Status"
+      message="You have not finished submitting your solution yet and would currently fail the task."
+    />
 
     <!-- Submission of final solution -->
     <UPageCard variant="soft">

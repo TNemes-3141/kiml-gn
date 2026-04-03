@@ -6,7 +6,8 @@ export default defineNitroPlugin(async () => {
       id VARCHAR(50) PRIMARY KEY,
       display_name VARCHAR(50) UNIQUE NOT NULL,
       passing_threshold INTEGER NOT NULL,
-      start_date TEXT NOT NULL
+      start_date TEXT NOT NULL,
+      portfolio_submission_deadline TIMESTAMP NOT NULL
     )
   `)
 
@@ -89,49 +90,52 @@ export default defineNitroPlugin(async () => {
     GROUP BY sub.task_id, sub.student_id
   `)
 
-  const semestersResult = await db.execute('SELECT COUNT(*) as count FROM semesters')
-  const semestersCount = Number(semestersResult.rows[0]!.count)
-  if (semestersCount === 0) {
-    await db.execute({
-      sql: 'INSERT INTO semesters (id, display_name, passing_threshold, start_date) VALUES (?, ?, ?, ?)',
-      args: ['ss2026', 'Sommersemester 2026', 1, '2026-03-15']
-    })
-  }
+  // Seed mock data only in local development (no Turso URL = local SQLite)
+  if (!process.env.TURSO_DATABASE_URL) {
+    const semestersResult = await db.execute('SELECT COUNT(*) as count FROM semesters')
+    const semestersCount = Number(semestersResult.rows[0]!.count)
+    if (semestersCount === 0) {
+      await db.execute({
+        sql: 'INSERT INTO semesters (id, display_name, passing_threshold, start_date, portfolio_submission_deadline) VALUES (?, ?, ?, ?, ?)',
+        args: ['ss2026', 'Sommersemester 2026', 1, '2026-03-15', '2026-08-31T23:59:59+02:00']
+      })
+    }
 
-  const studentsResult = await db.execute('SELECT COUNT(*) as count FROM students')
-  const studentsCount = Number(studentsResult.rows[0]!.count)
-  if (studentsCount === 0) {
-    await db.execute({
-      sql: 'INSERT INTO students (id, first_name, last_name, email, semester_id) VALUES (?, ?, ?, ?, ?)',
-      args: ['student-demo-1', 'Tamas', 'Nemes', 'tamas@example.com', 'ss2026']
-    })
-  }
+    const studentsResult = await db.execute('SELECT COUNT(*) as count FROM students')
+    const studentsCount = Number(studentsResult.rows[0]!.count)
+    if (studentsCount === 0) {
+      await db.execute({
+        sql: 'INSERT INTO students (id, first_name, last_name, email, semester_id) VALUES (?, ?, ?, ?, ?)',
+        args: ['student-demo-1', 'Tamas', 'Nemes', 'tamas@example.com', 'ss2026']
+      })
+    }
 
-  const tasksResult = await db.execute('SELECT COUNT(*) as count FROM tasks')
-  const tasksCount = Number(tasksResult.rows[0]!.count)
-  if (tasksCount === 0) {
-    await db.execute({
-      sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key, online_editor_link)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: ['task-1', 1, 'ss2026', 'Neuronale Netzwerke', 'neuronale-netzwerke', 0.1, '2026-03-29T08:00:00+02:00', '2026-07-29T08:00:00+02:00', 20, 100, 'task1_example_master.csv', 'https://colab.research.google.com/drive/example-task-1']
-    })
-    await db.execute({
-      sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key, online_editor_link)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-      args: ['task-2', 2, 'ss2026', 'Entscheidungsbäume', 'entscheidungsbaeume', 0.2, '2026-04-15T16:00:00+02:00', '2026-04-17T16:00:00+02:00', 20, 100, 'task2_example_master.csv', 'https://colab.research.google.com/drive/example-task-2']
-    })
-  }
+    const tasksResult = await db.execute('SELECT COUNT(*) as count FROM tasks')
+    const tasksCount = Number(tasksResult.rows[0]!.count)
+    if (tasksCount === 0) {
+      await db.execute({
+        sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key, online_editor_link)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: ['task-1', 1, 'ss2026', 'Neuronale Netzwerke', 'neuronale-netzwerke', 0.1, '2026-03-29T08:00:00+02:00', '2026-07-29T08:00:00+02:00', 20, 100, 'task1_example_master.csv', 'https://colab.research.google.com/drive/example-task-1']
+      })
+      await db.execute({
+        sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key, online_editor_link)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: ['task-2', 2, 'ss2026', 'Entscheidungsbäume', 'entscheidungsbaeume', 0.2, '2026-04-15T16:00:00+02:00', '2026-04-17T16:00:00+02:00', 20, 100, 'task2_example_master.csv', 'https://colab.research.google.com/drive/example-task-2']
+      })
+    }
 
-  const statesResult = await db.execute('SELECT COUNT(*) as count FROM student_task_states')
-  const statesCount = Number(statesResult.rows[0]!.count)
-  if (statesCount === 0) {
-    await db.execute({
-      sql: 'INSERT INTO student_task_states (student_id, task_id) VALUES (?, ?)',
-      args: ['student-demo-1', 'task-1']
-    })
-    await db.execute({
-      sql: 'INSERT INTO student_task_states (student_id, task_id) VALUES (?, ?)',
-      args: ['student-demo-1', 'task-2']
-    })
+    const statesResult = await db.execute('SELECT COUNT(*) as count FROM student_task_states')
+    const statesCount = Number(statesResult.rows[0]!.count)
+    if (statesCount === 0) {
+      await db.execute({
+        sql: 'INSERT INTO student_task_states (student_id, task_id, status) VALUES (?, ?, ?)',
+        args: ['student-demo-1', 'task-1', 'PASSED']
+      })
+      await db.execute({
+        sql: 'INSERT INTO student_task_states (student_id, task_id) VALUES (?, ?)',
+        args: ['student-demo-1', 'task-2']
+      })
+    }
   }
 })

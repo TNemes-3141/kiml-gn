@@ -23,7 +23,7 @@ defineProps<{ isAuthenticated: boolean }>()
           color="secondary"
           size="sm"
           square
-          to="/final-submission"
+          to="/portfolio"
         />
       </div>
     </template>

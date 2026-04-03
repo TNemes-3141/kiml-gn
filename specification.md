@@ -126,12 +126,32 @@ All tables should reflect the current state accurately, e.g., need to refresh wh
 Frame in Figma: `/tasks/task-1-neuronale-netzwerke/submission`
 
 ### Final report page
-Route: `/final-submission`
-Do not implement yet.
+Route: `/portfolio`
+Frame in Figma: `/portfolio`
+This route is **only accessible to authenticated users**. Use middleware to check for authentication status. The user can access this page by:
+- Typing in the route to the browser
+- Clicking the corresponding link in the `NavigationMenu` of the header
+- Clicking the button in the corresponding bento box section on the home page
 
-### Profile settings page
-Route: `/profile`
-Do not implement yet.
+As all sub-pages, the first element is a centered hero-text containing the page title and subtitle.
+
+Content area from top to bottom:
+- **Rules:** A card component (`soft` variant), with rule text in MD format. The rule text is rendered with `@nuxt/content` and the source markdown is in `/content/portfolio/rules.md` with a `title` prop.
+- A H1 titled "Current progress"
+- **Current progress display:** Stacked indicators showing how much of the requirements the student has alread met.
+  - Progress bar (color `primary`) with label "Programming tasks passed:" above and a large text "(x) / (y)" to the right, where (x) is the number of records from the `student_task_states` table where `student_id` == currently authenticated student and `status` == PASSED, and (y) is the `passing_threshold` value of the DB record of the current semester ("current semester" is defined as the record in the `semesters` table with the latest `start_date`)
+  - Progress bar in the same layout as the first, this time with label "Video report URL submitted:". The text this time shows "(z) / 1", where (z) is 0 if the `portfolio_video_link` column of the student's record is NULL, and 1 otherwise.
+  - A label "Portfolio submission deadline:" and below the `portfolio_submission_deadline` value of the current semester in big bold letters, in the format "dd.mm.yyyy hh:mm:ss tz" (German format)
+- **Status box:** `UPageCard` component with title "Status" that can have two states.
+  - Submission incomplete: If the `portfolio_video_link` column of the student's record is NULL. Then: Red card (color `error`), `i-lucide-octagon-alert` icon, with text "You have not finished handing in your portfolio yet and would currently fail the course."
+  - Submission complete: If the `portfolio_video_link` column of the student's record is not NULL. Then: Green card (color `success`), `i-lucide-check` icon, with text "You have handed in your portfolio successfully! Your submission was received and will be graded."
+- A H1 titled "Portfolio submission"
+- The **portfolio submission form**. All fields are required. Use proper form verification to ensure all required inputs are present and in the correct format before the Submit button becomes available. If the student does not fulfill the eligibility criteria, i.e. did not pass the required amount of programming tasks during the semester, the submission form is **not shown**. Instead: text "Portfolio submission not available. You did not pass the required amount of programming tasks." in color `error`.
+  - `UFormInput` field, title "Video report URL:", help text "Please provide a public link of a video explaining your solution.", placeholder "https://...".
+  - `UCheckbox` with text "I hereby confirm that I am the sole author of the video above."
+  - `UCheckbox` with text "I hereby confirm that the submitted video URL is correct, the video under the URL will be publicly accessible until four weeks after the portfolio submission deadline and the video is not longer than 3 minutes."
+  - `UCheckbox` with text "I hereby confirm that I've read and acknowledged the rules regarding plagiarism.", with the plagiarism rule text.
+  - "Submit portfolio" button (variant `solid`, color `primary`).
 
 ---
 ## Infrastructure
@@ -148,7 +168,8 @@ CREATE TABLE semesters (
     id VARCHAR(50) PRIMARY KEY, -- e.g., 'ws2026', 'ss2027'
     display_name VARCHAR(50) UNIQUE NOT NULL,
     passing_threshold INTEGER NOT NULL,
-    start_date TEXT NOT NULL -- ISO 8601 date, e.g., '2026-03-15'
+    start_date TEXT NOT NULL, -- ISO 8601 date, e.g., '2026-03-15'
+    portfolio_submission_deadline TIMESTAMP NOT NULL
 );
 ```
 

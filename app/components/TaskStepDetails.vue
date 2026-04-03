@@ -1,26 +1,17 @@
 <script setup lang="ts">
-import type { TasksCollectionItem } from '@nuxt/content'
-
 defineProps<{
   task: {
     slug: string
     onlineEditorLink: string
   }
-  description: TasksCollectionItem | null
+  description: unknown
 }>()
 </script>
 
 <template>
   <div class="flex flex-col gap-4">
     <!-- Task description card -->
-    <UPageCard variant="soft">
-      <template #title>
-        <span class="text-2xl font-bold">Task description</span>
-      </template>
-      <div class="prose prose-invert max-w-none">
-        <ContentRenderer v-if="description" :value="description" />
-      </div>
-    </UPageCard>
+    <ContentRendererCard :content="description" title="Task description" />
 
     <!-- Task materials card -->
     <UPageCard variant="soft">

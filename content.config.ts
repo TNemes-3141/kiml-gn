@@ -10,6 +10,13 @@ export default defineContentConfig({
         title: z.string(),
         slug: z.string()
       })
+    }),
+    portfolio: defineCollection({
+      type: 'page',
+      source: 'portfolio/*.md',
+      schema: z.object({
+        title: z.string()
+      })
     })
   }
 })
