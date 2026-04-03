@@ -1,6 +1,7 @@
 import { randomUUID } from 'node:crypto'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
+import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
@@ -41,7 +42,7 @@ export default defineEventHandler(async (event) => {
 
   // Resolve task
   const taskResult = await db.execute({
-    sql: 'SELECT id, max_daily_submissions, max_overall_submissions, submission_deadline FROM tasks WHERE slug = ?',
+    sql: 'SELECT id, serial_num, semester_id, max_daily_submissions, max_overall_submissions, submission_deadline FROM tasks WHERE slug = ?',
     args: [slug]
   })
   const task = taskResult.rows[0]
@@ -49,6 +50,8 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 404, message: 'Task not found' })
   }
   const taskId = task.id as string
+  const semesterId = task.semester_id as string
+  const taskSerialNum = Number(task.serial_num)
 
   // Check deadline
   const deadline = new Date(task.submission_deadline as string)
@@ -121,29 +124,35 @@ export default defineEventHandler(async (event) => {
   const submissionId = randomUUID()
   const serialNum = totalCount + 1
 
-  // Store files
-  const r2BucketUrl = process.env.R2_BUCKET_URL
-  let csvKey: string
-  let sourceKey: string
+  // Build file keys: [semester_id]/[serial_num]-[slug]/[student_id]/v[n].ext
+  const taskDir = `${semesterId}/${taskSerialNum}-${slug}/${studentId}`
+  const sourceExt = sourceCodeFile.filename.toLowerCase().endsWith('.ipynb') ? '.ipynb' : '.py'
+  const csvKey = `${taskDir}/v${serialNum}.csv`
+  const sourceKey = `${taskDir}/v${serialNum}${sourceExt}`
 
-  if (r2BucketUrl) {
-    // Production: upload to Cloudflare R2
-    const r2AccessKeyId = process.env.R2_ACCESS_KEY_ID
-    const r2SecretAccessKey = process.env.R2_SECRET_ACCESS_KEY
-    // R2 upload implementation would go here
-    csvKey = `${slug}/${studentId}_v${serialNum}_solution.csv`
-    sourceKey = `${slug}/${studentId}_v${serialNum}_${sourceCodeFile.filename}`
+  if (process.env.R2_ACCOUNT_ID) {
+    // Production: upload to Cloudflare R2 via S3-compatible API
+    const s3 = new S3Client({
+      region: 'auto',
+      endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      credentials: {
+        accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+        secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!
+      }
+    })
+    const bucket = process.env.R2_BUCKET_NAME!
+
+    await Promise.all([
+      s3.send(new PutObjectCommand({ Bucket: bucket, Key: csvKey, Body: solutionFile.data, ContentType: 'text/csv' })),
+      s3.send(new PutObjectCommand({ Bucket: bucket, Key: sourceKey, Body: sourceCodeFile.data, ContentType: 'application/octet-stream' }))
+    ])
   }
   else {
-    // Development: save locally
-    const uploadsDir = join(process.cwd(), '.data', 'uploads', slug, studentId)
+    // Development: save locally, mirroring the same directory structure
+    const uploadsDir = join(process.cwd(), '.data', 'uploads', taskDir)
     mkdirSync(uploadsDir, { recursive: true })
-
-    csvKey = `${slug}/${studentId}_v${serialNum}_solution.csv`
-    sourceKey = `${slug}/${studentId}_v${serialNum}_${sourceCodeFile.filename}`
-
-    writeFileSync(join(uploadsDir, `v${serialNum}_solution.csv`), solutionFile.data)
-    writeFileSync(join(uploadsDir, `v${serialNum}_${sourceCodeFile.filename}`), sourceCodeFile.data)
+    writeFileSync(join(process.cwd(), '.data', 'uploads', csvKey), solutionFile.data)
+    writeFileSync(join(process.cwd(), '.data', 'uploads', sourceKey), sourceCodeFile.data)
   }
 
   // Demo: random score between 0.0 and 1.0
