@@ -58,7 +58,8 @@ const selectableColumns: TableColumn<Submission>[] = [
           row.toggleSelected(true)
         }
       },
-      'ariaLabel': 'Select row'
+      'ariaLabel': 'Select row',
+      'color': 'neutral'
     })
   },
   {
@@ -251,11 +252,13 @@ async function onSubmit() {
           <UCheckbox
             v-model="authorConfirmed"
             label="I hereby confirm that I am the sole author of the solution I submit."
+            color="neutral"
             required
           />
           <div>
             <UCheckbox
               v-model="plagiarismConfirmed"
+              color="neutral"
               required
             >
               <template #label>

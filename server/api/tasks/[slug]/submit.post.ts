@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
 
   // Resolve task
   const taskResult = await db.execute({
-    sql: 'SELECT id, serial_num, semester_id, max_daily_submissions, max_overall_submissions, submission_deadline FROM tasks WHERE slug = ?',
+    sql: 'SELECT id, serial_num, semester_id, max_daily_submissions, max_overall_submissions, submission_deadline, master_solution_csv_key, grading_endpoint FROM tasks WHERE slug = ?',
     args: [slug]
   })
   const task = taskResult.rows[0]
@@ -103,6 +103,18 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Both solution file and source code file are required' })
   }
 
+  // Validate CSV shape against master before doing anything else
+  const masterCsvKey = task.master_solution_csv_key as string
+  const masterCsvText = await readMasterCsv(masterCsvKey)
+  const masterDims = getCsvDimensions(masterCsvText)
+  const studentDims = getCsvDimensions(solutionFile.data.toString('utf-8'))
+  if (masterDims.rows !== studentDims.rows || masterDims.cols !== studentDims.cols) {
+    throw createError({
+      statusCode: 400,
+      message: `CSV shape mismatch. Expected ${masterDims.rows} rows and ${masterDims.cols} columns, got ${studentDims.rows} rows and ${studentDims.cols} columns.`
+    })
+  }
+
   // Handle public alias
   if (publicAlias && !student.public_alias) {
     // Check uniqueness
@@ -135,7 +147,7 @@ export default defineEventHandler(async (event) => {
     const s3sdk = await import('@aws-sdk/client-s3')
     const s3 = new s3sdk.S3Client({
       region: 'auto',
-      endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
+      endpoint: `https://${process.env.R2_ACCOUNT_ID}.eu.r2.cloudflarestorage.com`,
       credentials: {
         accessKeyId: process.env.R2_ACCESS_KEY_ID!,
         secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!
@@ -157,18 +169,41 @@ export default defineEventHandler(async (event) => {
     writeFileSync(join(process.cwd(), '.data', 'uploads', sourceKey), sourceCodeFile.data)
   }
 
-  // Demo: random score between 0.0 and 1.0
-  const score = Math.round(Math.random() * 1000) / 1000
-
   await db.execute({
-    sql: `INSERT INTO submissions (id, student_id, task_id, submission_serial_num, score, source_code_file_key, student_csv_file_key)
-          VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    args: [submissionId, studentId, taskId, serialNum, score, sourceKey, csvKey]
+    sql: `INSERT INTO submissions (id, student_id, task_id, submission_serial_num, source_code_file_key, student_csv_file_key)
+          VALUES (?, ?, ?, ?, ?, ?)`,
+    args: [submissionId, studentId, taskId, serialNum, sourceKey, csvKey]
   })
 
-  return {
-    id: submissionId,
-    serialNum,
-    score
+  // Ensure a student_task_states row exists (idempotent)
+  await db.execute({
+    sql: `INSERT INTO student_task_states (student_id, task_id, status) VALUES (?, ?, 'NOT_COMPLETED')
+          ON CONFLICT (student_id, task_id) DO NOTHING`,
+    args: [studentId, taskId]
+  })
+
+  // Grade synchronously: pass both CSVs from memory so no R2 round-trip is needed.
+  // Awaiting here is reliable on Vercel; the fire-and-forget approach was not (Lambda freezes
+  // immediately after the response on warm reuse, killing any pending async work).
+  let score: number | null = null
+  const gradingEndpoint = task.grading_endpoint as string | null
+  if (gradingEndpoint) {
+    try {
+      const gradeResult = await ($fetch as Function)('/api/internal/grade', {
+        method: 'POST',
+        body: {
+          submissionId,
+          taskId,
+          masterCsv: masterCsvText,
+          studentCsv: solutionFile.data.toString('utf-8')
+        }
+      })
+      score = gradeResult?.score ?? null
+    }
+    catch {
+      // Grading error is already recorded in the DB by grade.post.ts
+    }
   }
+
+  return { id: submissionId, serialNum, score }
 })

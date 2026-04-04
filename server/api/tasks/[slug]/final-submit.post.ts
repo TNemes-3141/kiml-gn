@@ -77,10 +77,12 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 409, message: 'You have already submitted your final solution.' })
   }
 
-  // Update the task state
+  // Upsert the task state (the row may not exist yet if submit.post.ts didn't create it)
   await db.execute({
-    sql: 'UPDATE student_task_states SET selected_final_submission_id = ?, status = ? WHERE student_id = ? AND task_id = ?',
-    args: [body.submissionId, 'COMPLETED', studentId, taskId]
+    sql: `INSERT INTO student_task_states (student_id, task_id, selected_final_submission_id, status)
+          VALUES (?, ?, ?, 'COMPLETED')
+          ON CONFLICT (student_id, task_id) DO UPDATE SET selected_final_submission_id = excluded.selected_final_submission_id, status = 'COMPLETED'`,
+    args: [studentId, taskId, body.submissionId]
   })
 
   return { success: true }

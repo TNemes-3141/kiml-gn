@@ -73,11 +73,7 @@ const submissionColumns: TableColumn<Submission>[] = [
   {
     accessorKey: 'score',
     header: 'Score',
-    meta: { class: { th: 'text-right', td: 'text-right' } },
-    cell: ({ row }) => {
-      const score = row.getValue('score') as number | null
-      return score !== null ? score.toFixed(3) : '-'
-    }
+    meta: { class: { th: 'text-right', td: 'text-right' } }
   },
   {
     id: 'passesBaseline',
@@ -151,19 +147,21 @@ async function onSubmit(event: FormSubmitEvent<{ solutionFile: File, sourceCodeF
       formData.append('publicAlias', event.data.publicAlias)
     }
 
-    await ($fetch as Function)(`/api/tasks/${props.task.slug}/submit`, {
+    const result = await ($fetch as Function)(`/api/tasks/${props.task.slug}/submit`, {
       method: 'POST',
       body: formData
     })
 
-    toast.add({ title: 'Submission successful', description: 'Your solution has been submitted.', color: 'success' })
+    const score: number | null = result?.score ?? null
+    const scoreText = score !== null ? ` Your score is ${score.toFixed(3)}.` : ''
+    toast.add({ title: 'Submission successful', description: `Your solution has been submitted.${scoreText}`, color: 'success' })
 
     // Reset form
     state.solutionFile = undefined
     state.sourceCodeFile = undefined
     state.publicAlias = ''
 
-    // Refresh data
+    // Score is already in the DB — refresh everything once
     await Promise.all([refreshStats(), refreshStudentInfo(), refreshSubmissions(), refreshLeaderboard()])
     emit('submitted')
   }
@@ -286,22 +284,29 @@ function clearForm() {
           :columns="submissionColumns"
           :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
         >
+          <template #score-cell="{ row }">
+            <div class="flex justify-end">
+              <span>{{ row.original.score !== null ? row.original.score.toFixed(3) : '-' }}</span>
+            </div>
+          </template>
           <template #passesBaseline-cell="{ row }">
-            <template v-if="row.original.score !== null">
-              <UBadge
-                v-if="row.original.score >= task.baselineScore"
-                label="Yes"
-                color="success"
-                variant="subtle"
-              />
-              <UBadge
-                v-else
-                label="No"
-                color="error"
-                variant="subtle"
-              />
-            </template>
-            <span v-else>-</span>
+            <div class="flex justify-end">
+              <template v-if="row.original.score !== null">
+                <UBadge
+                  v-if="row.original.score >= task.baselineScore"
+                  label="Yes"
+                  color="success"
+                  variant="subtle"
+                />
+                <UBadge
+                  v-else
+                  label="No"
+                  color="error"
+                  variant="subtle"
+                />
+              </template>
+              <span v-else>-</span>
+            </div>
           </template>
         </UTable>
 

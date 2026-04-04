@@ -212,6 +212,7 @@ CREATE TABLE tasks (
     -- Cloudflare R2 pointer for the master solution
     master_solution_csv_key VARCHAR(255) NOT NULL,
     online_editor_link TEXT NOT NULL UNIQUE,
+    grading_endpoint VARCHAR(255) NOT NULL,
     FOREIGN KEY (semester_id) REFERENCES semesters(id) ON DELETE CASCADE
 );
 ```
@@ -228,6 +229,7 @@ CREATE TABLE submissions (
     -- Cloudflare R2 pointers for the student's uploaded files (for plagiarism checks)
     source_code_file_key VARCHAR(255) NOT NULL, -- e.g., 'ws2026/task1/student123_v3.ipynb'
     student_csv_file_key VARCHAR(255) NOT NULL,
+    grading_error TEXT,
     FOREIGN KEY (student_id) REFERENCES students(id) ON DELETE CASCADE,
     FOREIGN KEY (task_id) REFERENCES tasks(id) ON DELETE CASCADE
 );
@@ -330,43 +332,50 @@ const { data: description } = await useAsyncData(() =>
 Raw `.md` source files are never exposed to the client. Nuxt Content compiles them at build time and serves only the parsed AST through its internal API.
 
 ### Solution checking
-The platform grades student submissions by comparing the student's uploaded CSV against a **master solution CSV** for each task. The `tasks` table contains a `master_solution_csv_key` column that points to the file.
 
-#### Storage
-| Environment   | Storage location      | `master_solution_csv_key` value          |
-| ------------- | --------------------- | ---------------------------------------- |
-| Development   | `server/assets/solutions/` (bundled with Nitro, not publicly accessible) | Filename, e.g. `task1_example_master.csv` |
-| Production    | Cloudflare R2 bucket (private) | R2 object key, e.g. `ss2026/task1_master.csv` |
+#### Architecture
+Grading is **asynchronous**: the submit endpoint registers the submission with `score = NULL`, responds immediately, then fires-and-forgets a call to `/api/internal/grade`. That endpoint reads both CSVs, calls the task-specific grading endpoint, and writes the score back to the `submissions` table. The client polls `/api/tasks/[slug]/submissions` every 2 seconds until the score appears.
 
-**Development layout:**
 ```
-server/
-  assets/
-    solutions/
-      task1_example_master.csv
-      task2_example_master.csv
+submit.post.ts
+  → INSERT submission (score = NULL)
+  → respond to client
+  → $fetch /api/internal/grade { submissionId, taskId }   ← fire-and-forget
+        → read master CSV (assets:server or R2)
+        → read student CSV (local disk or R2)
+        → $fetch /api/grading/[task-slug] { masterCsv, studentCsv }
+        → UPDATE submissions SET score = ?
 ```
 
-#### Reading the master solution in an API route
-Use Nitro's storage API for local development and the R2 SDK for production. Example pattern:
+#### Master CSV storage
+| Environment | Location | `master_solution_csv_key` value |
+|---|---|---|
+| Development | `server/assets/solutions/` — bundled into Nitro, never public | Bare filename, e.g. `task1_example_master.csv` |
+| Production | Cloudflare R2 (private, same bucket as student files) | Full R2 key: `[semester_id]/[serial_num]-[slug]/master.csv` |
+
+Read via `readMasterCsv(key)` in `server/utils/read-master-csv.ts`: uses `useStorage('assets:server')` in dev; uses `GetObjectCommand` (S3 SDK, dynamic import) in prod.
+
+**Efficiency:** the master CSV is fetched once in `submit.post.ts` for shape validation and then forwarded in the fire-and-forget body to `/api/internal/grade`, which uses it directly without a second fetch. The grade handler falls back to fetching it independently only if called outside the normal submit flow.
+
+#### Per-task grading endpoints
+Each task has a dedicated grading endpoint at `server/api/grading/[task-slug].post.ts`. The `tasks.grading_endpoint` column stores its path (e.g. `/api/grading/neuronale-netzwerke`). All endpoints are protected by the `grading-guard` middleware (`X-Internal-Token` header required) and share the contract defined in `server/utils/grading.ts`:
 
 ```ts
-async function getMasterSolution(csvKey: string): Promise<string> {
-  const r2Url = process.env.R2_BUCKET_URL
-  if (r2Url) {
-    // Production: fetch from Cloudflare R2
-    const response = await fetch(`${r2Url}/${csvKey}`)
-    return await response.text()
-  }
-  // Development: read from server/assets/solutions/
-  const storage = useStorage('assets:server')
-  const content = await storage.getItem(`solutions/${csvKey}`)
-  if (!content) throw createError({ statusCode: 500, message: `Master solution not found: ${csvKey}` })
-  return content as string
-}
+interface GradingRequest  { masterCsv: string; studentCsv: string }
+interface GradingResponse { score: number }   // score ∈ [0, 1], higher = better
 ```
 
-The grading API route (to be implemented) will call this function, parse both CSVs, and compute a numerical score (e.g. accuracy or F1-score depending on the task).
+To add a new task: create a new grading endpoint file, add the `master_solution_csv_key` to `server/assets/solutions/`, set `grading_endpoint` in the seed/DB record, and deploy.
+
+#### Pre-submission validation
+Before the submission is registered, `submit.post.ts` calls `getCsvDimensions()` on both CSVs and rejects (HTTP 400) if the row or column counts differ. This catches obviously malformed submissions fast, without a network round-trip.
+
+#### Implemented grading metrics
+
+| Task | Metric | Details |
+|---|---|---|
+| Neuronale Netzwerke | R² (coefficient of determination) | Single-column CSV (`price_CHF`). $R^2 = 1 - \frac{\sum(y^*_i - y_i)^2}{\sum(y^*_i - \bar{y}^*)^2}$, clamped to [0, 1]. |
+| Entscheidungsbäume | Macro-averaged F1 | Columns `id`, `predicted_label`. Evaluated on test split (`split === 1`) of master CSV. |
 
 ### Deployment and hosting
 **Vercel** is used for deploying and hosting the course platform. It also runs the serverless functions from the `server/api/` route.

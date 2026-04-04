@@ -6,6 +6,10 @@ export default defineNuxtConfig({
   colorMode: { preference: 'dark', fallback: 'dark' },
   css: ['~/assets/css/main.css', 'katex/dist/katex.min.css'],
   content: {
+    database: {
+      type: 'libsql',
+      url: ':memory:'
+    },
     build: {
       markdown: {
         remarkPlugins: {

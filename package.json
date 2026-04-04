@@ -12,10 +12,10 @@
   "dependencies": {
     "@aws-sdk/client-s3": "^3.1023.0",
     "@libsql/client": "^0.17.2",
+    "better-sqlite3": "^12.8.0",
     "@nuxt/content": "^3.6.3",
     "@nuxt/eslint": "^1.9.0",
     "@nuxt/ui": "^4.6.0",
-    "better-sqlite3": "^12.8.0",
     "eslint": "^9.35.0",
     "katex": "^0.16.44",
     "nuxt": "^4.1.1",
