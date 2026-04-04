@@ -1,7 +1,6 @@
 import { randomUUID } from 'node:crypto'
 import { mkdirSync, writeFileSync } from 'node:fs'
 import { join } from 'node:path'
-import { PutObjectCommand, S3Client } from '@aws-sdk/client-s3'
 
 export default defineEventHandler(async (event) => {
   const slug = getRouterParam(event, 'slug')
@@ -131,8 +130,10 @@ export default defineEventHandler(async (event) => {
   const sourceKey = `${taskDir}/v${serialNum}${sourceExt}`
 
   if (process.env.R2_ACCOUNT_ID) {
-    // Production: upload to Cloudflare R2 via S3-compatible API
-    const s3 = new S3Client({
+    // Production: upload to Cloudflare R2 via S3-compatible API.
+    // Dynamically imported so the S3 SDK is never bundled in the dev server.
+    const s3sdk = await import('@aws-sdk/client-s3')
+    const s3 = new s3sdk.S3Client({
       region: 'auto',
       endpoint: `https://${process.env.R2_ACCOUNT_ID}.r2.cloudflarestorage.com`,
       credentials: {
@@ -143,8 +144,8 @@ export default defineEventHandler(async (event) => {
     const bucket = process.env.R2_BUCKET_NAME!
 
     await Promise.all([
-      s3.send(new PutObjectCommand({ Bucket: bucket, Key: csvKey, Body: solutionFile.data, ContentType: 'text/csv' })),
-      s3.send(new PutObjectCommand({ Bucket: bucket, Key: sourceKey, Body: sourceCodeFile.data, ContentType: 'application/octet-stream' }))
+      s3.send(new s3sdk.PutObjectCommand({ Bucket: bucket, Key: csvKey, Body: solutionFile.data, ContentType: 'text/csv' })),
+      s3.send(new s3sdk.PutObjectCommand({ Bucket: bucket, Key: sourceKey, Body: sourceCodeFile.data, ContentType: 'application/octet-stream' }))
     ])
   }
   else {
