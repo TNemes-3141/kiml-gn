@@ -19,7 +19,6 @@ const emit = defineEmits<{
 }>()
 
 const toast = useToast()
-const { pollingSubmissionId, startPolling } = useSubmissionPoller(computed(() => props.task.slug))
 
 const { data: stats, refresh: refreshStats } = await useFetch<{ dailyCount: number, totalCount: number }>(`/api/tasks/${props.task.slug}/stats`)
 const { data: studentInfo, refresh: refreshStudentInfo } = await useFetch<{ studentId: string, publicAlias: string | null }>(`/api/tasks/${props.task.slug}/student-info`)
@@ -153,22 +152,18 @@ async function onSubmit(event: FormSubmitEvent<{ solutionFile: File, sourceCodeF
       body: formData
     })
 
-    toast.add({ title: 'Submission received', description: 'Your solution is being scored...', color: 'info' })
+    const score: number | null = result?.score ?? null
+    const scoreText = score !== null ? ` Your score is ${score.toFixed(3)}.` : ''
+    toast.add({ title: 'Submission successful', description: `Your solution has been submitted.${scoreText}`, color: 'success' })
 
     // Reset form
     state.solutionFile = undefined
     state.sourceCodeFile = undefined
     state.publicAlias = ''
 
-    // Refresh counts and table immediately (score will be null initially)
-    await Promise.all([refreshStats(), refreshStudentInfo(), refreshSubmissions()])
+    // Score is already in the DB — refresh everything once
+    await Promise.all([refreshStats(), refreshStudentInfo(), refreshSubmissions(), refreshLeaderboard()])
     emit('submitted')
-
-    // Poll until the score appears, then refresh table and leaderboard
-    startPolling(result.id, async (score: number) => {
-      toast.add({ title: 'Scoring complete', description: `Your score is ${score.toFixed(3)}.`, color: 'success' })
-      await Promise.all([refreshSubmissions(), refreshLeaderboard()])
-    })
   }
   catch (err: unknown) {
     const message = (err as { data?: { message?: string } })?.data?.message ?? 'Submission failed. Please try again.'
@@ -291,20 +286,12 @@ function clearForm() {
         >
           <template #score-cell="{ row }">
             <div class="flex justify-end">
-              <USkeleton
-                v-if="row.original.score === null && pollingSubmissionId === row.original.id"
-                class="h-4 w-12"
-              />
-              <span v-else>{{ row.original.score !== null ? row.original.score.toFixed(3) : '-' }}</span>
+              <span>{{ row.original.score !== null ? row.original.score.toFixed(3) : '-' }}</span>
             </div>
           </template>
           <template #passesBaseline-cell="{ row }">
             <div class="flex justify-end">
-              <USkeleton
-                v-if="row.original.score === null && pollingSubmissionId === row.original.id"
-                class="h-4 w-8"
-              />
-              <template v-else-if="row.original.score !== null">
+              <template v-if="row.original.score !== null">
                 <UBadge
                   v-if="row.original.score >= task.baselineScore"
                   label="Yes"

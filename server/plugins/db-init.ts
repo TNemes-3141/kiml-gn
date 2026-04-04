@@ -92,10 +92,6 @@ export default defineNitroPlugin(async () => {
     GROUP BY sub.task_id, sub.student_id
   `)
 
-  // Schema migrations — idempotent ALTER TABLE statements for evolving schema
-  try { await db.execute(`ALTER TABLE tasks ADD COLUMN grading_endpoint VARCHAR(255)`) } catch {}
-  try { await db.execute(`ALTER TABLE submissions ADD COLUMN grading_error TEXT`) } catch {}
-
   // Seed mock data only in local development (no Turso URL = local SQLite)
   if (!process.env.TURSO_DATABASE_URL) {
     const semestersResult = await db.execute('SELECT COUNT(*) as count FROM semesters')
@@ -122,12 +118,7 @@ export default defineNitroPlugin(async () => {
       await db.execute({
         sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key, online_editor_link, grading_endpoint)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        args: ['task-1', 1, 'ss2026', 'Neuronale Netzwerke', 'neuronale-netzwerke', 0.1, '2026-03-29T08:00:00+02:00', '2026-07-29T08:00:00+02:00', 20, 100, 'task1_example_master.csv', 'https://colab.research.google.com/drive/example-task-1', '/api/grading/neuronale-netzwerke']
-      })
-      await db.execute({
-        sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key, online_editor_link, grading_endpoint)
-              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
-        args: ['task-2', 2, 'ss2026', 'Entscheidungsbäume', 'entscheidungsbaeume', 0.2, '2026-04-15T16:00:00+02:00', '2026-04-17T16:00:00+02:00', 20, 100, 'task2_example_master.csv', 'https://colab.research.google.com/drive/example-task-2', '/api/grading/entscheidungsbaeume']
+        args: ['task-1', 1, 'ss2026', 'Neuronale Netzwerke', 'neuronale-netzwerke', 0.1, '2026-03-29T08:00:00+02:00', '2026-07-29T08:00:00+02:00', 20, 100, 'master_solutions/ss2026-1-neuronale-netzwerke.csv', 'https://colab.research.google.com/drive/example-task-1', '/api/grading/neuronale-netzwerke']
       })
     }
 
@@ -137,10 +128,6 @@ export default defineNitroPlugin(async () => {
       await db.execute({
         sql: 'INSERT INTO student_task_states (student_id, task_id, status) VALUES (?, ?, ?)',
         args: ['student-demo-1', 'task-1', 'PASSED']
-      })
-      await db.execute({
-        sql: 'INSERT INTO student_task_states (student_id, task_id) VALUES (?, ?)',
-        args: ['student-demo-1', 'task-2']
       })
     }
   }

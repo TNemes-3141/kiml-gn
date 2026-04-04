@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<{ submissionId: string, taskId: string, masterCsv?: string }>(event)
+  const body = await readBody<{ submissionId: string, taskId: string, masterCsv?: string, studentCsv?: string }>(event)
   if (!body?.submissionId || !body?.taskId) {
     throw createError({ statusCode: 400, message: 'Missing submissionId or taskId' })
   }
@@ -53,35 +53,41 @@ export default defineEventHandler(async (event) => {
     return { ok: false }
   }
 
-  try {
-    // Read student CSV from R2 (production) or local disk (development)
-    if (process.env.R2_ACCOUNT_ID) {
-      const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3')
-      const s3 = new S3Client({
-        region: 'auto',
-        endpoint: `https://${process.env.R2_ACCOUNT_ID}.eu.r2.cloudflarestorage.com`,
-        credentials: {
-          accessKeyId: process.env.R2_ACCESS_KEY_ID!,
-          secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!
-        },
-        forcePathStyle: true
-      })
-      const response = await s3.send(new GetObjectCommand({
-        Bucket: process.env.R2_BUCKET_NAME!,
-        Key: studentCsvKey
-      }))
-      studentCsv = await response.Body!.transformToString('utf-8')
-    }
-    else {
-      studentCsv = readFileSync(join(process.cwd(), '.data', 'uploads', studentCsvKey), 'utf-8')
-    }
+  if (body.studentCsv) {
+    // Student CSV was passed in-memory from the submit handler — no I/O needed.
+    studentCsv = body.studentCsv
   }
-  catch (err) {
-    await db.execute({
-      sql: 'UPDATE submissions SET grading_error = ? WHERE id = ?',
-      args: [`Failed to read student CSV: ${String(err)}`, body.submissionId]
-    })
-    return { ok: false }
+  else {
+    // Fallback: fetch from storage (for calls made outside the normal submit flow).
+    try {
+      if (process.env.R2_ACCOUNT_ID) {
+        const { S3Client, GetObjectCommand } = await import('@aws-sdk/client-s3')
+        const s3 = new S3Client({
+          region: 'auto',
+          endpoint: `https://${process.env.R2_ACCOUNT_ID}.eu.r2.cloudflarestorage.com`,
+          credentials: {
+            accessKeyId: process.env.R2_ACCESS_KEY_ID!,
+            secretAccessKey: process.env.R2_SECRET_ACCESS_KEY!
+          },
+          forcePathStyle: true
+        })
+        const response = await s3.send(new GetObjectCommand({
+          Bucket: process.env.R2_BUCKET_NAME!,
+          Key: studentCsvKey
+        }))
+        studentCsv = await response.Body!.transformToString('utf-8')
+      }
+      else {
+        studentCsv = readFileSync(join(process.cwd(), '.data', 'uploads', studentCsvKey), 'utf-8')
+      }
+    }
+    catch (err) {
+      await db.execute({
+        sql: 'UPDATE submissions SET grading_error = ? WHERE id = ?',
+        args: [`Failed to read student CSV: ${String(err)}`, body.submissionId]
+      })
+      return { ok: false }
+    }
   }
 
   try {

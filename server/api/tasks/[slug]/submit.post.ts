@@ -175,21 +175,28 @@ export default defineEventHandler(async (event) => {
     args: [submissionId, studentId, taskId, serialNum, sourceKey, csvKey]
   })
 
-  // Fire-and-forget: trigger async grading in a separate Lambda invocation.
-  // Pass the already-fetched masterCsvText so the grade handler doesn't need to fetch it again.
+  // Grade synchronously: pass both CSVs from memory so no R2 round-trip is needed.
+  // Awaiting here is reliable on Vercel; the fire-and-forget approach was not (Lambda freezes
+  // immediately after the response on warm reuse, killing any pending async work).
+  let score: number | null = null
   const gradingEndpoint = task.grading_endpoint as string | null
   if (gradingEndpoint) {
-    $fetch('/api/internal/grade', {
-      method: 'POST',
-      body: { submissionId, taskId, masterCsv: masterCsvText }
-    }).catch(() => {
-      // Errors are recorded inside the grading endpoint itself
-    })
+    try {
+      const gradeResult = await ($fetch as Function)('/api/internal/grade', {
+        method: 'POST',
+        body: {
+          submissionId,
+          taskId,
+          masterCsv: masterCsvText,
+          studentCsv: solutionFile.data.toString('utf-8')
+        }
+      })
+      score = gradeResult?.score ?? null
+    }
+    catch {
+      // Grading error is already recorded in the DB by grade.post.ts
+    }
   }
 
-  return {
-    id: submissionId,
-    serialNum,
-    score: null
-  }
+  return { id: submissionId, serialNum, score }
 })
