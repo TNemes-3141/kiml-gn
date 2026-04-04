@@ -14,7 +14,7 @@ export default defineEventHandler(async () => {
     R2_BUCKET_NAME: bucketName ?? '(not set)',
     R2_ACCESS_KEY_ID: accessKeyId ? `${accessKeyId.slice(0, 6)}…` : '(not set)',
     R2_SECRET_ACCESS_KEY: secretKey ? `${secretKey.slice(0, 4)}… (${secretKey.length} chars)` : '(not set)',
-    endpoint: accountId ? `https://${accountId}.r2.cloudflarestorage.com` : '(no account ID)',
+    endpoint: accountId ? `https://${accountId}.eu.r2.cloudflarestorage.com` : '(no account ID)',
     forcePathStyle: true
   }
 
@@ -26,7 +26,7 @@ export default defineEventHandler(async () => {
     const { S3Client, HeadBucketCommand } = await import('@aws-sdk/client-s3')
     const s3 = new S3Client({
       region: 'auto',
-      endpoint: `https://${accountId}.r2.cloudflarestorage.com`,
+      endpoint: `https://${accountId}.eu.r2.cloudflarestorage.com`,
       credentials: { accessKeyId, secretAccessKey: secretKey },
       forcePathStyle: true
     })
