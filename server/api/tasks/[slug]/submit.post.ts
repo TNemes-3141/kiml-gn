@@ -175,6 +175,13 @@ export default defineEventHandler(async (event) => {
     args: [submissionId, studentId, taskId, serialNum, sourceKey, csvKey]
   })
 
+  // Ensure a student_task_states row exists (idempotent)
+  await db.execute({
+    sql: `INSERT INTO student_task_states (student_id, task_id, status) VALUES (?, ?, 'NOT_COMPLETED')
+          ON CONFLICT (student_id, task_id) DO NOTHING`,
+    args: [studentId, taskId]
+  })
+
   // Grade synchronously: pass both CSVs from memory so no R2 round-trip is needed.
   // Awaiting here is reliable on Vercel; the fire-and-forget approach was not (Lambda freezes
   // immediately after the response on warm reuse, killing any pending async work).
