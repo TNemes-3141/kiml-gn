@@ -19,6 +19,7 @@ const emit = defineEmits<{
 }>()
 
 const toast = useToast()
+const { pollingSubmissionId, startPolling } = useSubmissionPoller(computed(() => props.task.slug))
 
 const { data: stats, refresh: refreshStats } = await useFetch<{ dailyCount: number, totalCount: number }>(`/api/tasks/${props.task.slug}/stats`)
 const { data: studentInfo, refresh: refreshStudentInfo } = await useFetch<{ studentId: string, publicAlias: string | null }>(`/api/tasks/${props.task.slug}/student-info`)
@@ -73,11 +74,7 @@ const submissionColumns: TableColumn<Submission>[] = [
   {
     accessorKey: 'score',
     header: 'Score',
-    meta: { class: { th: 'text-right', td: 'text-right' } },
-    cell: ({ row }) => {
-      const score = row.getValue('score') as number | null
-      return score !== null ? score.toFixed(3) : '-'
-    }
+    meta: { class: { th: 'text-right', td: 'text-right' } }
   },
   {
     id: 'passesBaseline',
@@ -151,21 +148,27 @@ async function onSubmit(event: FormSubmitEvent<{ solutionFile: File, sourceCodeF
       formData.append('publicAlias', event.data.publicAlias)
     }
 
-    await ($fetch as Function)(`/api/tasks/${props.task.slug}/submit`, {
+    const result = await ($fetch as Function)(`/api/tasks/${props.task.slug}/submit`, {
       method: 'POST',
       body: formData
     })
 
-    toast.add({ title: 'Submission successful', description: 'Your solution has been submitted.', color: 'success' })
+    toast.add({ title: 'Submission received', description: 'Your solution is being scored...', color: 'info' })
 
     // Reset form
     state.solutionFile = undefined
     state.sourceCodeFile = undefined
     state.publicAlias = ''
 
-    // Refresh data
-    await Promise.all([refreshStats(), refreshStudentInfo(), refreshSubmissions(), refreshLeaderboard()])
+    // Refresh counts and table immediately (score will be null initially)
+    await Promise.all([refreshStats(), refreshStudentInfo(), refreshSubmissions()])
     emit('submitted')
+
+    // Poll until the score appears, then refresh table and leaderboard
+    startPolling(result.id, async (score: number) => {
+      toast.add({ title: 'Scoring complete', description: `Your score is ${score.toFixed(3)}.`, color: 'success' })
+      await Promise.all([refreshSubmissions(), refreshLeaderboard()])
+    })
   }
   catch (err: unknown) {
     const message = (err as { data?: { message?: string } })?.data?.message ?? 'Submission failed. Please try again.'
@@ -286,22 +289,37 @@ function clearForm() {
           :columns="submissionColumns"
           :pagination-options="{ getPaginationRowModel: getPaginationRowModel() }"
         >
+          <template #score-cell="{ row }">
+            <div class="flex justify-end">
+              <USkeleton
+                v-if="row.original.score === null && pollingSubmissionId === row.original.id"
+                class="h-4 w-12"
+              />
+              <span v-else>{{ row.original.score !== null ? row.original.score.toFixed(3) : '-' }}</span>
+            </div>
+          </template>
           <template #passesBaseline-cell="{ row }">
-            <template v-if="row.original.score !== null">
-              <UBadge
-                v-if="row.original.score >= task.baselineScore"
-                label="Yes"
-                color="success"
-                variant="subtle"
+            <div class="flex justify-end">
+              <USkeleton
+                v-if="row.original.score === null && pollingSubmissionId === row.original.id"
+                class="h-4 w-8"
               />
-              <UBadge
-                v-else
-                label="No"
-                color="error"
-                variant="subtle"
-              />
-            </template>
-            <span v-else>-</span>
+              <template v-else-if="row.original.score !== null">
+                <UBadge
+                  v-if="row.original.score >= task.baselineScore"
+                  label="Yes"
+                  color="success"
+                  variant="subtle"
+                />
+                <UBadge
+                  v-else
+                  label="No"
+                  color="error"
+                  variant="subtle"
+                />
+              </template>
+              <span v-else>-</span>
+            </div>
           </template>
         </UTable>
 

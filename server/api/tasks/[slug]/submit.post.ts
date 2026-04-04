@@ -41,7 +41,7 @@ export default defineEventHandler(async (event) => {
 
   // Resolve task
   const taskResult = await db.execute({
-    sql: 'SELECT id, serial_num, semester_id, max_daily_submissions, max_overall_submissions, submission_deadline FROM tasks WHERE slug = ?',
+    sql: 'SELECT id, serial_num, semester_id, max_daily_submissions, max_overall_submissions, submission_deadline, master_solution_csv_key, grading_endpoint FROM tasks WHERE slug = ?',
     args: [slug]
   })
   const task = taskResult.rows[0]
@@ -103,6 +103,18 @@ export default defineEventHandler(async (event) => {
     throw createError({ statusCode: 400, message: 'Both solution file and source code file are required' })
   }
 
+  // Validate CSV shape against master before doing anything else
+  const masterCsvKey = task.master_solution_csv_key as string
+  const masterCsvText = await readMasterCsv(masterCsvKey)
+  const masterDims = getCsvDimensions(masterCsvText)
+  const studentDims = getCsvDimensions(solutionFile.data.toString('utf-8'))
+  if (masterDims.rows !== studentDims.rows || masterDims.cols !== studentDims.cols) {
+    throw createError({
+      statusCode: 400,
+      message: `CSV shape mismatch. Expected ${masterDims.rows} rows and ${masterDims.cols} columns, got ${studentDims.rows} rows and ${studentDims.cols} columns.`
+    })
+  }
+
   // Handle public alias
   if (publicAlias && !student.public_alias) {
     // Check uniqueness
@@ -157,18 +169,26 @@ export default defineEventHandler(async (event) => {
     writeFileSync(join(process.cwd(), '.data', 'uploads', sourceKey), sourceCodeFile.data)
   }
 
-  // Demo: random score between 0.0 and 1.0
-  const score = Math.round(Math.random() * 1000) / 1000
-
   await db.execute({
-    sql: `INSERT INTO submissions (id, student_id, task_id, submission_serial_num, score, source_code_file_key, student_csv_file_key)
-          VALUES (?, ?, ?, ?, ?, ?, ?)`,
-    args: [submissionId, studentId, taskId, serialNum, score, sourceKey, csvKey]
+    sql: `INSERT INTO submissions (id, student_id, task_id, submission_serial_num, source_code_file_key, student_csv_file_key)
+          VALUES (?, ?, ?, ?, ?, ?)`,
+    args: [submissionId, studentId, taskId, serialNum, sourceKey, csvKey]
   })
+
+  // Fire-and-forget: trigger async grading in a separate Lambda invocation
+  const gradingEndpoint = task.grading_endpoint as string | null
+  if (gradingEndpoint) {
+    $fetch('/api/internal/grade', {
+      method: 'POST',
+      body: { submissionId, taskId }
+    }).catch(() => {
+      // Errors are recorded inside the grading endpoint itself
+    })
+  }
 
   return {
     id: submissionId,
     serialNum,
-    score
+    score: null
   }
 })
