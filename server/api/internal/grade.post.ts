@@ -2,7 +2,7 @@ import { readFileSync } from 'node:fs'
 import { join } from 'node:path'
 
 export default defineEventHandler(async (event) => {
-  const body = await readBody<{ submissionId: string, taskId: string }>(event)
+  const body = await readBody<{ submissionId: string, taskId: string, masterCsv?: string }>(event)
   if (!body?.submissionId || !body?.taskId) {
     throw createError({ statusCode: 400, message: 'Missing submissionId or taskId' })
   }
@@ -41,8 +41,9 @@ export default defineEventHandler(async (event) => {
   let studentCsv: string
 
   try {
-    // Read master CSV from Nitro server assets (bundled at build time, never public)
-    masterCsv = await readMasterCsv(masterCsvKey)
+    // Use the master CSV passed from the submit handler if available (avoids a second R2 fetch).
+    // Falls back to fetching it here for cases where grade is called independently.
+    masterCsv = body.masterCsv ?? await readMasterCsv(masterCsvKey)
   }
   catch (err) {
     await db.execute({

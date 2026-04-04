@@ -175,12 +175,13 @@ export default defineEventHandler(async (event) => {
     args: [submissionId, studentId, taskId, serialNum, sourceKey, csvKey]
   })
 
-  // Fire-and-forget: trigger async grading in a separate Lambda invocation
+  // Fire-and-forget: trigger async grading in a separate Lambda invocation.
+  // Pass the already-fetched masterCsvText so the grade handler doesn't need to fetch it again.
   const gradingEndpoint = task.grading_endpoint as string | null
   if (gradingEndpoint) {
     $fetch('/api/internal/grade', {
       method: 'POST',
-      body: { submissionId, taskId }
+      body: { submissionId, taskId, masterCsv: masterCsvText }
     }).catch(() => {
       // Errors are recorded inside the grading endpoint itself
     })

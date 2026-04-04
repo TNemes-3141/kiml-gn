@@ -348,9 +348,14 @@ submit.post.ts
 ```
 
 #### Master CSV storage
-Master CSVs are stored exclusively in `server/assets/solutions/` and bundled into the Nitro output at build time — in **both** development and production. They are never publicly accessible and never stored in R2. The `master_solution_csv_key` column holds the filename (e.g. `task1_example_master.csv`).
+| Environment | Location | `master_solution_csv_key` value |
+|---|---|---|
+| Development | `server/assets/solutions/` — bundled into Nitro, never public | Bare filename, e.g. `task1_example_master.csv` |
+| Production | Cloudflare R2 (private, same bucket as student files) | Full R2 key: `[semester_id]/[serial_num]-[slug]/master.csv` |
 
-Read via `readMasterCsv(filename)` in `server/utils/read-master-csv.ts`, which uses `useStorage('assets:server')` in all environments. Adding a new task requires placing the master CSV in `server/assets/solutions/` and deploying.
+Read via `readMasterCsv(key)` in `server/utils/read-master-csv.ts`: uses `useStorage('assets:server')` in dev; uses `GetObjectCommand` (S3 SDK, dynamic import) in prod.
+
+**Efficiency:** the master CSV is fetched once in `submit.post.ts` for shape validation and then forwarded in the fire-and-forget body to `/api/internal/grade`, which uses it directly without a second fetch. The grade handler falls back to fetching it independently only if called outside the normal submit flow.
 
 #### Per-task grading endpoints
 Each task has a dedicated grading endpoint at `server/api/grading/[task-slug].post.ts`. The `tasks.grading_endpoint` column stores its path (e.g. `/api/grading/neuronale-netzwerke`). All endpoints are protected by the `grading-guard` middleware (`X-Internal-Token` header required) and share the contract defined in `server/utils/grading.ts`:
