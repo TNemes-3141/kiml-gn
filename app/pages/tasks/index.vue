@@ -3,6 +3,8 @@ definePageMeta({
   middleware: 'auth'
 })
 
+useHead({ title: 'Programmieraufgaben' })
+
 interface TasksData {
   semester: {
     id: string
@@ -46,8 +48,8 @@ function dismissInfoPermanently() {
 <template>
   <UContainer>
     <UPageHero
-      title="Programming tasks"
-      description="Overview of assigned tasks and your progress."
+      title="Programmieraufgaben"
+      description="Übersicht über die gestellten Aufgaben und Ihren Fortschritt."
     />
 
     <div class="mx-auto max-w-4xl pb-16">
@@ -58,11 +60,11 @@ function dismissInfoPermanently() {
       >
         <UIcon name="i-lucide-info" class="mb-2 size-5 text-secondary-400" />
         <p class="text-[15px] leading-6 text-secondary-300">
-          Here, you can see all programming tasks that will be assigned during the semester. A blue open lock icon shows the tasks that can currently be edited. Please note the deadline dates for submission. Only the tasks that show the status "Submitted" have been submitted properly and are eligible for grading (pass/fail). Please note you need to pass at least {{ data?.semester?.passingThreshold ?? 0 }} out of {{ data?.totalTasks ?? 0 }} tasks to complete your final submission.
+          Hier sehen Sie alle Programmieraufgaben, die im Laufe des Semesters gestellt werden. Ein blaues offenes Schloss-Symbol zeigt die Aufgaben an, die derzeit bearbeitet werden können. Bitte beachten Sie die Abgabefristen. Nur Aufgaben mit dem Status "Abgegeben" wurden korrekt eingereicht und werden bewertet (bestanden/nicht bestanden). Bitte beachten Sie, dass Sie mindestens {{ data?.semester?.passingThreshold ?? 0 }} von {{ data?.totalTasks ?? 0 }} Aufgaben bestehen müssen, um Ihr Portfolio abgeben zu können.
         </p>
         <div class="mt-4 flex justify-end gap-2">
-          <UButton label="Dismiss" color="secondary" size="sm" @click="dismissInfo" />
-          <UButton label="Do not show this again" color="secondary" variant="outline" size="sm" @click="dismissInfoPermanently" />
+          <UButton label="Ausblenden" color="secondary" size="sm" @click="dismissInfo" />
+          <UButton label="Nicht mehr anzeigen" color="secondary" variant="outline" size="sm" @click="dismissInfoPermanently" />
         </div>
       </div>
 
@@ -70,13 +72,13 @@ function dismissInfoPermanently() {
       <div class="mb-10 rounded-[10px] bg-error-500/20 p-6">
         <UIcon name="i-lucide-octagon-alert" class="mb-2 size-5 text-error-400" />
         <p class="text-[15px] leading-6 text-error-300">
-          All deadlines are strict and we <strong>do not accept late submissions!</strong> Deadline extensions cannot be granted. It is your individual responsibility to start solving the tasks early enough so that you can hand in your results on time. In particular, the checking engine for scoring submissions can take a substantial amount of time to run on the server.
+          Alle Abgabefristen sind verbindlich und wir akzeptieren <strong>keine verspäteten Abgaben!</strong> Fristverlängerungen können nicht gewährt werden. Es liegt in Ihrer individuellen Verantwortung, rechtzeitig mit der Bearbeitung der Aufgaben zu beginnen, damit Sie Ihre Ergebnisse fristgerecht einreichen können. Insbesondere kann die Bewertung Ihrer Abgaben auf dem Server eine erhebliche Zeit in Anspruch nehmen.
         </p>
       </div>
 
       <!-- Progress section -->
       <ProgressIndicator
-        label="Tasks passed:"
+        label="Aufgaben bestanden:"
         :value="data?.passedCount ?? 0"
         :max="data?.semester?.passingThreshold ?? 1"
         color="primary"
@@ -84,7 +86,7 @@ function dismissInfoPermanently() {
 
       <!-- Task overview heading -->
       <h1 class="mb-6 mt-10 text-4xl font-bold">
-        Task overview
+        Aufgabenübersicht
       </h1>
 
       <TaskOverviewList :tasks="data?.tasks ?? []" />

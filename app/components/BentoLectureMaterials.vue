@@ -24,10 +24,10 @@ function lecturePath(title: string): string {
 <template>
   <div class="col-span-3 rounded-xl border border-primary-500/20 bg-primary-500/5 p-6">
     <h3 class="text-base font-semibold">
-      Lecture materials
+      Vorlesungsmaterialien
     </h3>
     <p class="mt-1 text-sm text-muted">
-      Slides, referenced animations and other materials by unit.
+      Folien, Animationen und weitere Materialien nach Vorlesungseinheit.
     </p>
 
     <div class="mt-4 grid grid-cols-3 gap-4">

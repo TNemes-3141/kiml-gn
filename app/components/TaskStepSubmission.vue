@@ -48,7 +48,7 @@ const rowSelection = ref<Record<string, boolean>>({})
 const selectableColumns: TableColumn<Submission>[] = [
   {
     id: 'select',
-    header: 'Select a solution:',
+    header: 'Lösung auswählen:',
     cell: ({ row }) => h(UCheckbox, {
       'modelValue': row.getIsSelected(),
       'onUpdate:modelValue': (value: boolean | 'indeterminate') => {
@@ -64,11 +64,11 @@ const selectableColumns: TableColumn<Submission>[] = [
   },
   {
     accessorKey: 'serialNum',
-    header: 'Number'
+    header: 'Nr.'
   },
   {
     accessorKey: 'submittedAt',
-    header: 'Date and time',
+    header: 'Datum und Uhrzeit',
     meta: { class: { th: 'w-full', td: 'w-full' } },
     cell: ({ row }) => {
       const val = row.getValue('submittedAt') as string
@@ -94,7 +94,7 @@ const selectableColumns: TableColumn<Submission>[] = [
   },
   {
     id: 'passesBaseline',
-    header: 'Passes baseline?',
+    header: 'Baseline erreicht?',
     meta: { class: { th: 'text-right', td: 'text-right' } },
     accessorKey: 'score'
   }
@@ -136,12 +136,12 @@ async function onSubmit() {
       body: { submissionId: selectedRow.value.id }
     })
 
-    toast.add({ title: 'Submission successful', description: 'Your final solution has been submitted.', color: 'success' })
+    toast.add({ title: 'Abgabe erfolgreich', description: 'Ihre endgültige Lösung wurde eingereicht.', color: 'success' })
     await refreshTaskState()
   }
   catch (err: unknown) {
-    const message = (err as { data?: { message?: string } })?.data?.message ?? 'Submission failed. Please try again.'
-    toast.add({ title: 'Submission failed', description: message, color: 'error' })
+    const message = (err as { data?: { message?: string } })?.data?.message ?? 'Abgabe fehlgeschlagen. Bitte versuchen Sie es erneut.'
+    toast.add({ title: 'Abgabe fehlgeschlagen', description: message, color: 'error' })
   }
   finally {
     submitting.value = false
@@ -155,7 +155,7 @@ async function onSubmit() {
     <div class="rounded-[10px] bg-warning-500/20 p-6">
       <UIcon name="i-lucide-triangle-alert" class="mb-2 size-5 text-warning-400" />
       <p class="text-[15px] leading-6 text-warning-300">
-        It is not enough to upload the solution, you also have to hand-in the solution to pass the project! Please make sure to correctly submit the solution you intend by selecting it from the table below, agreeing to the project rules and pressing "Submit". Only correctly submitted solutions are eligible for grading (pass/fail). Please double check that your hand-in was successful by <strong>refreshing the page after pressing the "Submit" button!</strong>
+        Es reicht nicht aus, Ihre Lösung(en) hochzuladen. Sie müssen eine Lösung auch abgeben, um die Aufgabe zu bestehen! Bitte wählen Sie Ihre gewünschte Lösungsabgabe aus der Tabelle unten aus, stimmen Sie den Projektregeln zu und drücken Sie "Abgeben". Nur korrekt abgegebene Lösungen werden bewertet (bestanden/nicht bestanden). Bitte überprüfen Sie die erfolgreiche Abgabe, indem Sie <strong>die Seite nach dem Drücken von "Abgeben" aktualisieren!</strong>
       </p>
     </div>
 
@@ -164,19 +164,19 @@ async function onSubmit() {
       v-if="hasSubmitted"
       state="success"
       title="Status"
-      message="You have finished submitting your solution and your submission was received."
+      message="Sie haben Ihre Lösung erfolgreich abgegeben und Ihre Abgabe wurde empfangen."
     />
     <StatusCard
       v-else
       state="error"
       title="Status"
-      message="You have not finished submitting your solution yet and would currently fail the task."
+      message="Sie haben Ihre Lösung noch nicht abgegeben und würden die Aufgabe derzeit nicht bestehen."
     />
 
     <!-- Submission of final solution -->
     <UPageCard variant="soft">
       <template #title>
-        Submission of final solution
+        Abgabe der endgültigen Lösung
       </template>
 
       <!-- Already submitted: show only the selected submission -->
@@ -189,13 +189,13 @@ async function onSubmit() {
             <template v-if="row.original.score !== null">
               <UBadge
                 v-if="row.original.score >= task.baselineScore"
-                label="Yes"
+                label="Ja"
                 color="success"
                 variant="subtle"
               />
               <UBadge
                 v-else
-                label="No"
+                label="Nein"
                 color="error"
                 variant="subtle"
               />
@@ -219,13 +219,13 @@ async function onSubmit() {
             <template v-if="row.original.score !== null">
               <UBadge
                 v-if="row.original.score >= task.baselineScore"
-                label="Yes"
+                label="Ja"
                 color="success"
                 variant="subtle"
               />
               <UBadge
                 v-else
-                label="No"
+                label="Nein"
                 color="error"
                 variant="subtle"
               />
@@ -236,7 +236,7 @@ async function onSubmit() {
 
         <div class="flex items-center justify-between border-t border-neutral-800 pt-4">
           <p class="text-sm text-neutral-400">
-            {{ Object.values(rowSelection).filter(Boolean).length }} of {{ submissions.length }} row(s) selected.
+            {{ Object.values(rowSelection).filter(Boolean).length }} von {{ submissions.length }} Zeile(n) ausgewählt.
           </p>
           <UPagination
             :page="(submissionTable?.tableApi?.getState().pagination.pageIndex ?? 0) + 1"
@@ -251,7 +251,7 @@ async function onSubmit() {
         <div class="mt-6 flex flex-col gap-4">
           <UCheckbox
             v-model="authorConfirmed"
-            label="I hereby confirm that I am the sole author of the solution I submit."
+            label="Hiermit bestätige ich, dass ich der/die alleinige Autor/in der von mir eingereichten Lösung bin."
             color="neutral"
             required
           />
@@ -262,11 +262,11 @@ async function onSubmit() {
               required
             >
               <template #label>
-                <span class="font-semibold">I hereby confirm that I've read and acknowledged the rules regarding plagiarism.</span>
+                <span class="font-semibold">Hiermit bestätige ich, dass ich die Regeln bezüglich Plagiarismus gelesen und zur Kenntnis genommen habe.</span>
               </template>
             </UCheckbox>
             <p class="ml-6 mt-1 text-sm text-neutral-400">
-              The solution code must be original work by the submitting person. You may not copy the work of other students (including work produced by students in previous versions of this course), or share code or provide details on how to solve the task to other students. You may not publish project solutions online. Using solutions from previous years or from other student's submissions in any capacity is considered plagiarism. Among the code, including those of previous years, we search for similar solutions in order to detect plagiarism. Although not strictly forbidden, we discourage the use of ChatGPT, Gemini or similar code/language generation tools for writing code.
+              Der Lösungscode muss eine eigenständige Arbeit der einreichenden Person sein. Sie dürfen weder die Arbeit anderer Studierender kopieren (einschließlich Arbeiten aus früheren Versionen dieses Kurses), noch Code weitergeben oder anderen Studierenden Details zur Lösung der Aufgabe mitteilen. Sie dürfen Projektlösungen nicht online veröffentlichen. Die Verwendung von Lösungen aus früheren Jahren oder von anderen Studierenden gilt als Plagiat. Unter den Abgaben, auch aus früheren Jahren, suchen wir nach ähnlichen Lösungen, um Plagiate zu erkennen. Obwohl nicht ausdrücklich verboten, raten wir von der Verwendung von ChatGPT, Gemini oder ähnlichen Code-/Sprachgenerierungstools zum Schreiben von Code ab.
             </p>
           </div>
         </div>
@@ -274,7 +274,7 @@ async function onSubmit() {
         <!-- Submit button -->
         <div class="mt-6 flex justify-end">
           <UButton
-            label="Submit"
+            label="Abgeben"
             color="neutral"
             variant="solid"
             :disabled="!canSubmit"

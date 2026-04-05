@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { getLectureSlug, getLectureDisplayTitle, getValidatedLectures, type Semester } from '~/data/lectures'
 
+useHead({ title: 'Vorlesungsmaterialien' })
+
 const { data: semesters } = await useFetch<Semester[]>('/api/semesters')
 
 const now = new Date()
@@ -31,23 +33,26 @@ function lecturePath(title: string): string {
 <template>
   <UContainer>
     <UPageHero
-      title="Lecture materials"
-      description="Slides, referenced animations and other materials by unit."
+      title="Vorlesungsmaterialien"
+      description="Animationen, Mitmachübungen und weitere Materialien nach Vorlesungseinheit."
     />
 
     <div class="mx-auto max-w-4xl pb-16">
       <!-- Semester selector -->
-      <label class="mb-2 block text-base">Choose a semester:</label>
+      <label class="mb-2 block text-base">Semester auswählen:</label>
       <USelectMenu
         v-model="selectedSemesterId"
         :items="semesterItems"
         value-key="value"
         class="w-full"
+        :search-input="{
+          placeholder: 'Semester suchen...',
+        }"
       />
 
       <!-- Lectures heading -->
       <h1 class="mb-6 mt-10 text-4xl font-bold">
-        Lectures
+        Vorlesungen
       </h1>
 
       <!-- Lecture cards grid -->

@@ -19,33 +19,8 @@ export default defineEventHandler(async (event) => {
   const baselineScore = Number(task.baseline_score)
 
   // Resolve student
-  const rawCookie = getCookie(event, 'auth:user')
-  if (!rawCookie) {
-    throw createError({ statusCode: 401, message: 'Not authenticated' })
-  }
-
-  let email: string | null = null
-  try {
-    const parsed = JSON.parse(decodeURIComponent(rawCookie))
-    email = parsed?.email ?? null
-  }
-  catch {
-    throw createError({ statusCode: 401, message: 'Invalid auth cookie' })
-  }
-
-  if (!email) {
-    throw createError({ statusCode: 401, message: 'Not authenticated' })
-  }
-
-  const studentResult = await db.execute({
-    sql: 'SELECT id FROM students WHERE email = ?',
-    args: [email]
-  })
-  const student = studentResult.rows[0]
-  if (!student) {
-    throw createError({ statusCode: 404, message: 'Student not found' })
-  }
-  const studentId = student.id as string
+  const student = await requireStudent(event)
+  const studentId = student.id
 
   // Parse body
   const body = await readBody<{ submissionId: string }>(event)
@@ -65,7 +40,7 @@ export default defineEventHandler(async (event) => {
 
   const score = Number(submission.score)
   if (score < baselineScore) {
-    throw createError({ statusCode: 400, message: 'Selected submission does not pass the baseline score.' })
+    throw createError({ statusCode: 400, message: 'Die ausgewählte Abgabe erreicht nicht den Baseline-Score.' })
   }
 
   // Check not already submitted
@@ -74,7 +49,7 @@ export default defineEventHandler(async (event) => {
     args: [studentId, taskId]
   })
   if (stateResult.rows[0]?.selected_final_submission_id) {
-    throw createError({ statusCode: 409, message: 'You have already submitted your final solution.' })
+    throw createError({ statusCode: 409, message: 'Sie haben Ihre endgültige Lösung bereits abgegeben.' })
   }
 
   // Upsert the task state (the row may not exist yet if submit.post.ts didn't create it)

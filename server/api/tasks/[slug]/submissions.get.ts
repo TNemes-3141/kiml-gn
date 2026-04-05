@@ -17,30 +17,16 @@ export default defineEventHandler(async (event) => {
   }
   const taskId = task.id as string
 
-  // Resolve student from auth cookie
-  let studentId: string | null = null
-  const rawCookie = getCookie(event, 'auth:user')
-  if (rawCookie) {
-    try {
-      const parsed = JSON.parse(decodeURIComponent(rawCookie))
-      if (parsed?.email) {
-        const studentResult = await db.execute({
-          sql: 'SELECT id FROM students WHERE email = ?',
-          args: [parsed.email]
-        })
-        studentId = (studentResult.rows[0]?.id as string) ?? null
-      }
-    }
-    catch {}
-  }
+  // Resolve student
+  const student = await resolveStudent(event)
 
-  if (!studentId) {
+  if (!student) {
     return { submissions: [] }
   }
 
   const result = await db.execute({
     sql: 'SELECT id, submission_serial_num, submitted_at, score, student_csv_file_key, source_code_file_key FROM submissions WHERE student_id = ? AND task_id = ? ORDER BY submitted_at DESC',
-    args: [studentId, taskId]
+    args: [student.id, taskId]
   })
 
   const submissions = result.rows.map(row => ({

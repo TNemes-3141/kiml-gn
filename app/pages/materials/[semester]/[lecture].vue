@@ -21,12 +21,16 @@ const lecture = computed(() =>
   )
 )
 
+useHead({
+  title: computed(() => lecture.value ? getLectureDisplayTitle(lecture.value) : 'Materialien')
+})
+
 if (!semester.value || !lecture.value) {
   throw createError({ statusCode: 404, statusMessage: 'Lecture not found' })
 }
 
 const breadcrumbItems = computed(() => [
-  { label: 'Lecture materials', to: '/materials' },
+  { label: 'Vorlesungsmaterialien', to: '/materials' },
   { label: semester.value!.displayName },
   { label: getLectureDisplayTitle(lecture.value!) }
 ])
@@ -39,14 +43,14 @@ async function copyLink(link: string) {
   try {
     await navigator.clipboard.writeText(link)
     toast.add({
-      title: 'Link copied to clipboard',
+      title: 'Link in die Zwischenablage kopiert',
       icon: 'i-lucide-check',
       color: 'success'
     })
   }
   catch {
     toast.add({
-      title: 'Failed to copy link',
+      title: 'Link konnte nicht kopiert werden',
       icon: 'i-lucide-x',
       color: 'error'
     })
@@ -57,8 +61,8 @@ async function copyLink(link: string) {
 <template>
   <UContainer>
     <UPageHero
-      title="Lecture materials"
-      description="Slides, referenced animations and other materials by unit."
+      title="Vorlesungsmaterialien"
+      description="Animationen, Mitmachübungen und weitere Materialien nach Vorlesungseinheit."
     />
 
     <div class="mx-auto max-w-4xl pb-16">
@@ -76,7 +80,7 @@ async function copyLink(link: string) {
           to="/materials"
         />
         <h1 class="text-4xl font-bold">
-          Materials
+          Materialien
         </h1>
       </div>
 
@@ -96,7 +100,7 @@ async function copyLink(link: string) {
               color="secondary"
               @click="openLink(material.link)"
             >
-              Open
+              Öffnen
             </UButton>
             <UButton
               variant="outline"

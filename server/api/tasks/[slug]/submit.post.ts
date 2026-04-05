@@ -11,33 +11,8 @@ export default defineEventHandler(async (event) => {
   const db = useDB()
 
   // Resolve authenticated student
-  const rawCookie = getCookie(event, 'auth:user')
-  if (!rawCookie) {
-    throw createError({ statusCode: 401, message: 'Not authenticated' })
-  }
-
-  let email: string | null = null
-  try {
-    const parsed = JSON.parse(decodeURIComponent(rawCookie))
-    email = parsed?.email ?? null
-  }
-  catch {
-    throw createError({ statusCode: 401, message: 'Invalid auth cookie' })
-  }
-
-  if (!email) {
-    throw createError({ statusCode: 401, message: 'Not authenticated' })
-  }
-
-  const studentResult = await db.execute({
-    sql: 'SELECT id, public_alias FROM students WHERE email = ?',
-    args: [email]
-  })
-  const student = studentResult.rows[0]
-  if (!student) {
-    throw createError({ statusCode: 404, message: 'Student not found' })
-  }
-  const studentId = student.id as string
+  const student = await requireStudent(event)
+  const studentId = student.id
 
   // Resolve task
   const taskResult = await db.execute({
@@ -55,7 +30,7 @@ export default defineEventHandler(async (event) => {
   // Check deadline
   const deadline = new Date(task.submission_deadline as string)
   if (new Date() > deadline) {
-    throw createError({ statusCode: 400, message: 'Submission deadline has passed' })
+    throw createError({ statusCode: 400, message: 'Die Abgabefrist ist abgelaufen.' })
   }
 
   // Check daily limit
@@ -64,7 +39,7 @@ export default defineEventHandler(async (event) => {
     args: [studentId, taskId]
   })
   if (Number(dailyResult.rows[0]?.count) >= Number(task.max_daily_submissions)) {
-    throw createError({ statusCode: 429, message: 'Daily submission limit reached' })
+    throw createError({ statusCode: 429, message: 'Tägliches Abgabelimit erreicht.' })
   }
 
   // Check overall limit
@@ -74,7 +49,7 @@ export default defineEventHandler(async (event) => {
   })
   const totalCount = Number(totalResult.rows[0]?.count)
   if (totalCount >= Number(task.max_overall_submissions)) {
-    throw createError({ statusCode: 429, message: 'Overall submission limit reached' })
+    throw createError({ statusCode: 429, message: 'Gesamtlimit für Abgaben erreicht.' })
   }
 
   // Parse multipart form data
@@ -100,7 +75,7 @@ export default defineEventHandler(async (event) => {
   }
 
   if (!solutionFile || !sourceCodeFile) {
-    throw createError({ statusCode: 400, message: 'Both solution file and source code file are required' })
+    throw createError({ statusCode: 400, message: 'Sowohl die Lösungsdatei als auch die Quellcode-Datei sind erforderlich.' })
   }
 
   // Validate CSV shape against master before doing anything else
@@ -111,19 +86,19 @@ export default defineEventHandler(async (event) => {
   if (masterDims.rows !== studentDims.rows || masterDims.cols !== studentDims.cols) {
     throw createError({
       statusCode: 400,
-      message: `CSV shape mismatch. Expected ${masterDims.rows} rows and ${masterDims.cols} columns, got ${studentDims.rows} rows and ${studentDims.cols} columns.`
+      message: `CSV-Format stimmt nicht überein. Erwartet: ${masterDims.rows} Zeilen und ${masterDims.cols} Spalten, erhalten: ${studentDims.rows} Zeilen und ${studentDims.cols} Spalten.`
     })
   }
 
   // Handle public alias
-  if (publicAlias && !student.public_alias) {
+  if (publicAlias && !student.publicAlias) {
     // Check uniqueness
     const aliasCheck = await db.execute({
       sql: 'SELECT COUNT(*) as count FROM students WHERE public_alias = ?',
       args: [publicAlias]
     })
     if (Number(aliasCheck.rows[0]?.count) > 0) {
-      throw createError({ statusCode: 409, message: 'This alias is already taken. Please choose a different one.' })
+      throw createError({ statusCode: 409, message: 'Dieser Alias ist bereits vergeben. Bitte wählen Sie einen anderen.' })
     }
 
     await db.execute({

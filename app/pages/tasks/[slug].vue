@@ -13,17 +13,19 @@ if (!task.value) {
 }
 
 const heroTitle = computed(() =>
-  task.value ? `Task #${task.value.serialNum}: ${task.value.title}` : ''
+  task.value ? `Aufgabe #${task.value.serialNum}: ${task.value.title}` : ''
 )
+
+useHead({ title: heroTitle })
 
 const STEP_DETAILS = 'details'
 const STEP_SOLUTION = 'solution'
 const STEP_SUBMISSION = 'submission'
 
 const stepperItems = [
-  { title: '1. Task details', icon: 'i-lucide-clipboard', value: STEP_DETAILS },
-  { title: '2. Solution and leaderboard', icon: 'i-lucide-cloud-upload', value: STEP_SOLUTION },
-  { title: '3. Submit', icon: 'i-lucide-circle-check', value: STEP_SUBMISSION }
+  { title: '1. Aufgabendetails', icon: 'i-lucide-clipboard', value: STEP_DETAILS },
+  { title: '2. Lösung und Bestenliste', icon: 'i-lucide-cloud-upload', value: STEP_SOLUTION },
+  { title: '3. Abgabe', icon: 'i-lucide-circle-check', value: STEP_SUBMISSION }
 ]
 
 const stepper = useTemplateRef('stepper')
@@ -51,7 +53,7 @@ const { data: description } = await useAsyncData(`task-desc-${slug}`, () =>
           <div class="mb-6 flex justify-between">
             <UButton
               v-if="stepper?.hasPrev"
-              label="Previous"
+              label="Zurück"
               icon="i-lucide-arrow-left"
               color="neutral"
               variant="soft"
@@ -60,7 +62,7 @@ const { data: description } = await useAsyncData(`task-desc-${slug}`, () =>
             <div v-else />
             <UButton
               v-if="stepper?.hasNext"
-              label="Next"
+              label="Weiter"
               icon="i-lucide-arrow-right"
               trailing
               color="neutral"

@@ -1,17 +1,18 @@
 ---
-title: "Portfolio rules"
+title: "Portfolioregeln"
 ---
 
-Here, you can see your progress on your final portfolio exam, and submit it at the end of the semester. Remember that submission is final and **cannot be revoked**. Please note the deadline for submission, as we **cannot accept late submissions!**
+Hier sehen Sie Ihren Fortschritt bei der Portfolioprüfung und können diese am Ende des Semesters einreichen. Bitte beachten Sie, dass die Abgabe endgültig ist und **nicht widerrufen werden kann**. Beachten Sie die Abgabefrist, da wir **keine verspäteten Abgaben akzeptieren!**
 
-## In order to be eligible for submitting the portfolio:
+## Voraussetzungen für die Portfolioabgabe:
 
-- You need to hand in and pass a certain minimum of programming tasks during the semester; see the status bar below
-- Only tasks showing the status "Passed" are counted
+- Sie müssen während des Semesters eine bestimmte Mindestanzahl an Programmieraufgaben einreichen und bestehen; siehe Statusanzeige unten
+- Nur Aufgaben mit dem Status "Bestanden" werden gezählt
 
-## Rules for the video report:
+## Regeln für den Videobericht:
 
-- You can freely choose any of your submitted solutions to hold your presentation about
-- You should explain the code you’ve written, the solutions you've tried, what did and didn't work, etc.
-- Your video must **strictly be at most 3 minutes long!**
-- Your video can be uploaded to any cloud provider of your choice; however, you must ensure that the video file is **publicly accessible until four weeks after the deadline** under the link you provide, **without password protection**!
+- Sie können frei wählen, über welche Ihrer eingereichten Lösungen Sie Ihre Präsentation halten
+- Sie sollten den von Ihnen geschriebenen Code erklären, die Lösungsansätze, die Sie ausprobiert haben, was funktioniert hat und was nicht usw.
+- Ihr Video darf **maximal 3 Minuten lang sein!**
+- Ihr Video kann bei einem Cloud-Anbieter Ihrer Wahl hochgeladen werden; Sie müssen jedoch sicherstellen, dass die Videodatei unter dem von Ihnen angegebenen Link **bis vier Wochen nach der Abgabefrist öffentlich zugänglich** und **ohne Passwortschutz** erreichbar ist!
+- Nicht abgegebene Portfolios oder Videos, die wir nicht abrufen können, werden als nicht bestanden benotet.

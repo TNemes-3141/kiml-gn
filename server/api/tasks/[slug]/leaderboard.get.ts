@@ -17,22 +17,9 @@ export default defineEventHandler(async (event) => {
   }
   const taskId = task.id as string
 
-  // Resolve current student from auth cookie (for row highlighting)
-  let currentStudentId: string | null = null
-  const rawCookie = getCookie(event, 'auth:user')
-  if (rawCookie) {
-    try {
-      const parsed = JSON.parse(decodeURIComponent(rawCookie))
-      if (parsed?.email) {
-        const studentResult = await db.execute({
-          sql: 'SELECT id FROM students WHERE email = ?',
-          args: [parsed.email]
-        })
-        currentStudentId = (studentResult.rows[0]?.id as string) ?? null
-      }
-    }
-    catch {}
-  }
+  // Resolve current student (for row highlighting)
+  const student = await resolveStudent(event)
+  const currentStudentId = student?.id ?? null
 
   // Query the leaderboard view with competitive ranking
   const result = await db.execute({

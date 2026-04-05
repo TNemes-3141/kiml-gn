@@ -25,10 +25,10 @@ const overallPercent = computed(() =>
 <template>
   <div class="col-span-1 flex flex-col rounded-xl border border-secondary-500/20 bg-secondary-500/5 p-6">
     <h3 class="text-base font-semibold">
-      Your portfolio
+      Ihr Portfolio
     </h3>
     <p class="mt-1 text-sm text-muted">
-      The progress of your portfolio for the final submission.
+      Der Fortschritt Ihres Portfolios für die Abgabe.
     </p>
 
     <template v-if="isAuthenticated">
@@ -47,7 +47,7 @@ const overallPercent = computed(() =>
             size="md"
           />
           <p class="mt-1 text-sm text-muted">
-            Programming tasks passed
+            Programmieraufgaben bestanden
           </p>
         </div>
 
@@ -60,7 +60,7 @@ const overallPercent = computed(() =>
             size="md"
           />
           <p class="mt-1 text-sm text-muted">
-            Video report URL submitted
+            Videobericht-URL eingereicht
           </p>
         </div>
       </div>
@@ -74,10 +74,10 @@ const overallPercent = computed(() =>
         />
       </div>
     </template>
-    <div v-else class="flex flex-1 flex-col items-center justify-center gap-4">
+    <div v-else class="flex flex-1 flex-col items-center justify-center gap-4 mt-5">
       <UIcon name="i-lucide-lock" class="text-muted size-14" />
       <p class="text-center text-muted">
-        Sign in to access your portfolio
+        Melden Sie sich an, um auf Ihr Portfolio zuzugreifen
       </p>
     </div>
   </div>
