@@ -122,6 +122,11 @@ export default defineNitroPlugin(async () => {
       await db.execute({
         sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key, online_editor_link, grading_endpoint)
               VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+        args: ['task-0', 0, 'ss2026', 'Testaufgabe', 'testaufgabe', 0.1, '2026-03-15T08:00:00+02:00', '2026-07-29T08:00:00+02:00', 20, 100, 'master_solutions/ss2026-0-testaufgabe.csv', 'https://colab.research.google.com/drive/example-task-0', '/api/grading/testaufgabe']
+      })
+      await db.execute({
+        sql: `INSERT INTO tasks (id, serial_num, semester_id, title, slug, baseline_score, unlock_time, submission_deadline, max_daily_submissions, max_overall_submissions, master_solution_csv_key, online_editor_link, grading_endpoint)
+              VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
         args: ['task-1', 1, 'ss2026', 'Neuronale Netzwerke', 'neuronale-netzwerke', 0.1, '2026-03-29T08:00:00+02:00', '2026-07-29T08:00:00+02:00', 20, 100, 'master_solutions/ss2026-1-neuronale-netzwerke.csv', 'https://colab.research.google.com/drive/example-task-1', '/api/grading/neuronale-netzwerke']
       })
     }

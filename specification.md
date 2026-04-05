@@ -321,8 +321,8 @@ Task descriptions are stored as Markdown files in `content/tasks/` at the projec
 ```
 content/
   tasks/
+    testaufgabe.md
     neuronale-netzwerke.md
-    entscheidungsbaeume.md
 ```
 
 **Querying and rendering:** In a page component, use `queryCollection` to fetch the parsed content by slug, and `<ContentRenderer>` to render it:
@@ -376,7 +376,7 @@ interface GradingRequest  { masterCsv: string; studentCsv: string }
 interface GradingResponse { score: number }   // score ∈ [0, 1], higher = better
 ```
 
-To add a new task: create a new grading endpoint file, add the `master_solution_csv_key` to `server/assets/solutions/`, set `grading_endpoint` in the seed/DB record, and deploy.
+To add a new task, see the [Checklist for adding a new task](#checklist-for-adding-a-new-task) section below.
 
 #### Pre-submission validation
 Before the submission is registered, `submit.post.ts` calls `getCsvDimensions()` on both CSVs and rejects (HTTP 400) if the row or column counts differ. This catches obviously malformed submissions fast, without a network round-trip.
@@ -385,8 +385,90 @@ Before the submission is registered, `submit.post.ts` calls `getCsvDimensions()`
 
 | Task | Metric | Details |
 |---|---|---|
+| Testaufgabe | 1 − RMSE | Single-column CSV (`prediction`). $\text{Score} = 1 - \sqrt{\frac{1}{n}\sum(y_i - \hat{y}_i)^2}$, clamped to [0, 1]. |
 | Neuronale Netzwerke | R² (coefficient of determination) | Single-column CSV (`price_CHF`). $R^2 = 1 - \frac{\sum(y^*_i - y_i)^2}{\sum(y^*_i - \bar{y}^*)^2}$, clamped to [0, 1]. |
-| Entscheidungsbäume | Macro-averaged F1 | Columns `id`, `predicted_label`. Evaluated on test split (`split === 1`) of master CSV. |
+
+### Checklist for adding a new task
+
+Follow these steps in order whenever a new programming task is introduced.
+
+#### 1. Prepare the master solution CSV
+
+Create the CSV file containing the ground-truth values that student submissions will be graded against. The file format must match what the grading endpoint expects (e.g., a single column `prediction`, or `price_CHF`, etc.).
+
+- **Development:** Place the file in `server/assets/solutions/master_solutions/` with the naming convention `[semester_id]-[serial_num]-[slug].csv` (e.g., `ss2026-0-testaufgabe.csv`).
+- **Production (Cloudflare R2):** Upload the file to the private R2 bucket under the key `[semester_id]/[serial_num]-[slug]/master.csv` (e.g., `ss2026/0-testaufgabe/master.csv`).
+
+#### 2. Write the grading endpoint
+
+Create a new file at `server/api/grading/[slug].post.ts`. Use an existing endpoint (e.g., `neuronale-netzwerke.post.ts` or `testaufgabe.post.ts`) as a template. The endpoint must:
+
+- Import and implement the `GradingRequest` / `GradingResponse` interfaces from `server/utils/grading.ts`.
+- Parse both the master and student CSVs using the helpers in `server/utils/csv.ts` (e.g., `parseSingleColumnCsv`).
+- Validate row counts match; throw a 400 error if they don't.
+- Compute the task-specific metric, clamp the score to [0, 1], round to 3 decimal places, and return `{ score }`.
+
+The endpoint is protected by the `grading-guard` middleware (requires `X-Internal-Token` header), so it is not callable by students.
+
+#### 3. Write the task description (Markdown)
+
+Create `content/tasks/[slug].md` with YAML frontmatter containing `title` and `slug`:
+
+```yaml
+---
+title: "Aufgabe #N: Task Title"
+slug: task-slug
+---
+```
+
+The body supports full Markdown with LaTeX math (via `remark-math` / `rehype-katex`). Describe the background, solution steps, expected CSV format, and grading metric.
+
+#### 4. Prepare the handout archive
+
+Place the downloadable handout (starter code, data files, etc.) at `public/handouts/[slug].zip`. This is served as a static file and linked from the task details page.
+
+#### 5. Insert the task record in the database
+
+Add a row to the `tasks` table. The key columns are:
+
+| Column | Example value | Notes |
+|---|---|---|
+| `id` | `task-0` | Unique internal ID |
+| `serial_num` | `0` | Display order; used in "Aufgabe #N" |
+| `semester_id` | `ss2026` | Must reference an existing semester |
+| `title` | `Testaufgabe` | Displayed in UI |
+| `slug` | `testaufgabe` | Must match the MD filename, handout filename, and grading endpoint |
+| `baseline_score` | `0.1` | Minimum score to pass |
+| `unlock_time` | `2026-03-15T08:00:00+02:00` | Task becomes visible and editable |
+| `submission_deadline` | `2026-07-29T08:00:00+02:00` | Hard deadline; no late submissions |
+| `max_daily_submissions` | `20` | Per-student daily upload limit |
+| `max_overall_submissions` | `100` | Per-student total upload limit |
+| `master_solution_csv_key` | `master_solutions/ss2026-0-testaufgabe.csv` | Path used by `readMasterCsv()` |
+| `online_editor_link` | `https://colab.research.google.com/drive/...` | Google Colab link for the task |
+| `grading_endpoint` | `/api/grading/testaufgabe` | Path to the grading endpoint from step 2 |
+
+For local development, add the INSERT statement to the dev seed block in `server/plugins/db-init.ts`. For production, insert directly into Turso.
+
+#### 6. Verify
+
+1. Delete the local dev database (`.data/app.db`) so the seed runs fresh.
+2. Start the dev server (`npm run dev`).
+3. Confirm the task appears on `/tasks` with the correct title, status, and deadlines.
+4. Open the task, verify the Markdown description renders (step 1), the handout download works, and the Colab link opens.
+5. Upload the master CSV as a student submission — it should score 1.000 (perfect match).
+6. Upload a deliberately wrong CSV — it should score below the baseline.
+7. Proceed to step 3 (submit) and verify the full submission flow works end-to-end.
+
+#### Summary of touched files
+
+| File | Action |
+|---|---|
+| `server/assets/solutions/master_solutions/[semester]-[num]-[slug].csv` | Add master CSV |
+| `server/api/grading/[slug].post.ts` | Create grading endpoint |
+| `content/tasks/[slug].md` | Create task description |
+| `public/handouts/[slug].zip` | Add handout archive |
+| `server/plugins/db-init.ts` (dev only) | Add seed INSERT for the task |
+| `tasks` table in Turso (production) | Insert task record |
 
 ### Deployment and hosting
 **Vercel** is used for deploying and hosting the course platform. It also runs the serverless functions from the `server/api/` route.

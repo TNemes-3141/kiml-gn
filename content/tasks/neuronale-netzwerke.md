@@ -1,5 +1,5 @@
 ---
-title: "Task #1: Neuronale Netzwerke"
+title: "Aufgabe #1: Neuronale Netzwerke"
 slug: neuronale-netzwerke
 ---
 
