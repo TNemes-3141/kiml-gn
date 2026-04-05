@@ -56,7 +56,7 @@ const columns: TableColumn<Task>[] = [
   {
     accessorKey: 'serialNum',
     header: 'Aufg. Nr.',
-    cell: ({ row }) => `Aufgabe ${row.getValue('serialNum')}`
+    cell: ({ row }) => `# ${row.getValue('serialNum')}`
   },
   {
     accessorKey: 'title',
