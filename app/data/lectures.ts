@@ -28,7 +28,7 @@ export function getLectureSlug(title: string): string {
 }
 
 export function getLectureDisplayTitle(lecture: Lecture): string {
-  return `Einheit ${lecture.order} – ${lecture.title}`
+  return `Einheit ${lecture.order}: ${lecture.title}`
 }
 
 /**
@@ -40,7 +40,7 @@ export function getValidatedLectures(semesters: Semester[]): Lecture[] {
   return lectures.filter((lecture) => {
     if (validIds.has(lecture.semesterId)) return true
     console.error(
-      `[lectures] CRITICAL: Lecture "${lecture.title}" references unknown semester "${lecture.semesterId}" — excluded from display`
+      `[lectures] CRITICAL: Lecture "${lecture.title}" references unknown semester "${lecture.semesterId}"; excluded from display`
     )
     return false
   })
@@ -48,25 +48,21 @@ export function getValidatedLectures(semesters: Semester[]): Lecture[] {
 
 export const lectures: Lecture[] = [
   {
-    title: 'Lineare Regression, logistischer Fehler, Klassifikation',
-    icon: 'i-lucide-chart-spline',
+    title: 'Einstieg',
+    icon: 'i-lucide-info',
     order: 1,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-02-16'),
+    unlockDateTime: new Date('2026-04-09'),
     materials: [
-      { title: 'Folien', link: 'https://example.com/slides/1' },
-      { title: 'Kleinste-Quadrate-Methode (OLS) Demo', link: 'https://example.com/ols-demo' },
-      { title: 'Die Kostenfunktion (Animiertes GIF)', link: 'https://example.com/cost-function-gif' }
     ]
   },
   {
-    title: 'Perzeptron, biologischer Hintergrund',
+    title: 'Biologischer Hintergrund, Lineare Regression, Perzeptron',
     icon: 'i-lucide-sprout',
     order: 2,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-01-23'),
+    unlockDateTime: new Date('2026-04-16'),
     materials: [
-      { title: 'Folien', link: 'https://example.com/slides/2' }
     ]
   },
   {
@@ -74,59 +70,53 @@ export const lectures: Lecture[] = [
     icon: 'i-lucide-brain-circuit',
     order: 3,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-01-30'),
+    unlockDateTime: new Date('2026-04-23'),
     materials: [
-      { title: 'Folien', link: 'https://example.com/slides/3' }
     ]
   },
   {
-    title: 'Entscheidungsbäume',
-    icon: 'i-lucide-git-fork',
+    title: 'Logistischer Fehler, Klassifikation, SVMs',
+    icon: 'i-lucide-fold-vertical',
     order: 4,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-02-06'),
+    unlockDateTime: new Date('2026-04-30'),
     materials: [
-      { title: 'Folien', link: 'https://example.com/slides/4' }
     ]
   },
   {
-    title: 'Q-Learning',
-    icon: 'i-lucide-swords',
+    title: 'Clustering, K-means',
+    icon: 'i-lucide-chart-scatter',
     order: 5,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-02-13'),
+    unlockDateTime: new Date('2026-05-07'),
     materials: [
-      { title: 'Folien', link: 'https://example.com/slides/5' }
     ]
   },
   {
-    title: 'Clustering',
-    icon: 'i-lucide-chart-scatter',
+    title: 'Entscheidungsbäume, ID3, CART',
+    icon: 'i-lucide-git-fork',
     order: 6,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-02-20'),
+    unlockDateTime: new Date('2026-05-21'),
     materials: [
-      { title: 'Folien', link: 'https://example.com/slides/6' }
+    ]
+  },
+  {
+    title: 'Q-Learning, Reinforcement Learning',
+    icon: 'i-lucide-swords',
+    order: 7,
+    semesterId: 'ss2026',
+    unlockDateTime: new Date('2026-05-28'),
+    materials: [
     ]
   },
   {
     title: 'Fundamentale Konzepte des ML',
     icon: 'i-lucide-chart-pie',
-    order: 7,
-    semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-02-27'),
-    materials: [
-      { title: 'Folien', link: 'https://example.com/slides/7' }
-    ]
-  },
-  {
-    title: 'Support Vector Machines',
-    icon: 'i-lucide-fold-vertical',
     order: 8,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-03-04'),
+    unlockDateTime: new Date('2026-06-04'),
     materials: [
-      { title: 'Folien', link: 'https://example.com/slides/8' }
     ]
   },
   {
@@ -134,29 +124,26 @@ export const lectures: Lecture[] = [
     icon: 'i-lucide-scan-eye',
     order: 9,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-03-11'),
+    unlockDateTime: new Date('2026-06-11'),
     materials: [
-      { title: 'Folien', link: 'https://example.com/slides/9' }
     ]
   },
   {
-    title: 'Generative KI',
-    icon: 'i-lucide-brush',
+    title: 'Object detection, Segmentation',
+    icon: 'i-lucide-image',
     order: 10,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-03-18'),
+    unlockDateTime: new Date('2026-06-18'),
     materials: [
-      { title: 'Folien', link: 'https://example.com/slides/10' }
     ]
   },
   {
-    title: 'Large Language Models',
-    icon: 'i-lucide-message-square-text',
+    title: 'Generative KI, Large Language Models',
+    icon: 'i-lucide-brush',
     order: 11,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-03-25'),
+    unlockDateTime: new Date('2026-06-25'),
     materials: [
-      { title: 'Folien', link: 'https://example.com/slides/11' }
     ]
   },
   {
@@ -164,9 +151,87 @@ export const lectures: Lecture[] = [
     icon: 'i-lucide-bot',
     order: 12,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-04-01'),
+    unlockDateTime: new Date('2026-07-02'),
     materials: [
-      { title: 'Folien', link: 'https://example.com/slides/12' }
     ]
-  }
+  },
+  {
+    title: 'Biologischer Hintergrund, Perzeptron',
+    icon: 'i-lucide-sprout',
+    order: 1,
+    semesterId: 'ss2025',
+    unlockDateTime: new Date('2025-01-01'),
+    materials: [
+      { title: 'Ordinary Least Squares (OLS) Demo', link: 'https://www.desmos.com/calculator/r9fm4syebi?lang=de' },
+      { title: 'Die Kostenfunktion (Animiertes GIF)', link: 'https://gifyu.com/image/SGlgS' },
+      { title: 'Mitmachübung: Interaktives Modell eines Perzeptrons', link: 'https://tnemes-3141.github.io/perzeptron-demo/' }
+    ]
+  },
+  {
+    title: 'Aktivierung, Neuronale Netzwerke, Backpropagation',
+    icon: 'i-lucide-brain-circuit',
+    order: 2,
+    semesterId: 'ss2025',
+    unlockDateTime: new Date('2025-01-01'),
+    materials: [
+      { title: 'Sigmoid vs. ReLU Demo', link: 'https://www.desmos.com/calculator/lz8h2iejdx' },
+      { title: 'Gradient descent (Animiertes GIF)', link: 'https://gifyu.com/image/SGlg6' },
+      { title: 'Mitmachübung: Trainieren eines neuronalen Netzwerks', link: 'https://colab.research.google.com/drive/1HVMc-fIU4gWD0SiswDBzVSRafJzcFyaX?usp=sharing' },
+      { title: 'Neural Networks (Videoreihe) von 3Blue1Brown', link: 'https://www.youtube.com/playlist?list=PLgxo3DDiqnvAmMOTzZbgD9d4gtQ9V7Lig' },
+    ]
+  },
+  {
+    title: 'Entscheidungsbäume, ID3/CART, Q-Learning',
+    icon: 'i-lucide-git-fork',
+    order: 3,
+    semesterId: 'ss2025',
+    unlockDateTime: new Date('2025-01-01'),
+    materials: [
+      { title: 'Splitting in Decision Trees (Animiertes GIF)', link: 'https://gifyu.com/image/SGl4j' },
+      { title: 'Demo für DTL-Komplexität', link: 'https://www.desmos.com/calculator/wlt2aaf15m' },
+      { title: 'Flappy Bird-Spielumgebung (Animiertes GIF)', link: 'https://gifyu.com/image/SGl4r' },
+      { title: 'Mitmachübung: Frozen Lake-Game', link: 'https://tnemes-3141.github.io/q-learning-demo/' },
+    ]
+  },
+  {
+    title: 'SVMs, Clustering, Fundamentale Konzepte des ML',
+    icon: 'i-lucide-chart-scatter',
+    order: 4,
+    semesterId: 'ss2025',
+    unlockDateTime: new Date('2025-01-01'),
+    materials: [
+      { title: 'Support Vector Machines (SVMs) zum Ausprobieren', link: 'https://greitemann.dev/svm-demo' },
+      { title: 'Visualisierung k-nearest neighbors (Animiertes GIF)', link: 'https://gifyu.com/image/SGnbt' },
+      { title: 'K-means Clustering zum Ausprobieren', link: 'http://alekseynp.com/viz/k-means.html' },
+      { title: 'Mitmachübung: Vor- und Nachbereitung eines Datensatzes', link: 'https://colab.research.google.com/drive/1-z1cXOFJMKlvTEWs3W7jldfNBNSFuKMA?usp=sharing' },
+    ]
+  },
+  {
+    title: 'Convolutional Neural Networks',
+    icon: 'i-lucide-scan-eye',
+    order: 5,
+    semesterId: 'ss2025',
+    unlockDateTime: new Date('2025-01-01'),
+    materials: [
+      { title: 'Fashion-MNIST Inspektor', link: 'https://huggingface.co/datasets/zalando-datasets/fashion_mnist/viewer' },
+      { title: 'Kernels zum Ausprobieren', link: 'https://editor.p5js.org/MaschinenNah/full/PZYCjAsie' },
+      { title: 'CNN Explainer', link: 'https://poloclub.github.io/cnn-explainer/' },
+    ]
+  },
+  {
+    title: 'Generative KI, Large Language Models',
+    icon: 'i-lucide-brush',
+    order: 6,
+    semesterId: 'ss2025',
+    unlockDateTime: new Date('2025-01-01'),
+    materials: [
+      { title: 'Image-2-Image Demo', link: 'https://affinelayer.com/pixsrv/index.html' },
+      { title: 'Fooocus (Open source-Bildgenerator): GitHub-Repo', link: 'https://github.com/lllyasviel/Fooocus' },
+      { title: 'Fooocus (Open source-Bildgenerator): HuggingFace-Modell', link: 'https://huggingface.co/RunDiffusion/Juggernaut-XL-v9' },
+      { title: 'Fooocus (Open source-Bildgenerator): CivitAI-Seite', link: 'https://civitai.com/models/133005/juggernaut-xl' },
+      { title: 'Attention und Transformers (Videoreihe) von StatQuest', link: 'https://www.youtube.com/watch?v=PSs6nxngL6k&list=PLgxo3DDiqnvA72eCg3Feqn0D7ooEu1lgB&index=3' },
+      { title: 'Attention und Transformers (Videoreihe) von 3Blue1Brown', link: 'https://www.youtube.com/watch?v=wjZofJX0v4M&list=PLgxo3DDiqnvCozXT5wbttuszwPV0CdF8d&index=1' },
+      { title: 'Machine Learning-Glossar', link: 'https://developers.google.com/machine-learning/glossary' },
+    ]
+  },
 ]
