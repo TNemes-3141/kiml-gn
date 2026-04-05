@@ -294,6 +294,17 @@ The route `/login` should have a fallback mechanism for when no token is given, 
 
 #### Authentication after first login
 
+After the first successful login, the platform authenticates the user on subsequent visits via the `auth:session` HttpOnly cookie:
+
+1. On every page request (SSR), a server-only Nuxt plugin reads the `auth:session` cookie and calls `GET /api/auth/me` to resolve the student.
+2. `/api/auth/me` looks up the `token_hash` in the `students` table, verifies `first_login_at` is within the 6-month validity window, and returns the student's name and email.
+3. The result is stored in a reactive `useState('auth:user')` that is transferred from server to client during SSR hydration.
+4. Client-side route middleware checks this state to protect `/tasks` and `/portfolio` routes.
+5. All server API endpoints independently verify the cookie via a shared `resolveStudent()` utility — client-side state is never trusted for authorization.
+6. The cookie is sent automatically with every same-origin request (`SameSite: Lax`), requiring no client-side JavaScript to manage the session.
+7. If the cookie expires (after 6 months) or is cleared, the user re-clicks the original email link to re-authenticate. If `first_login_at` is older than 6 months, the link is rejected and the user must contact the instructor.
+8. To log out, the user clicks a logout button which calls `POST /api/auth/logout`, clearing the cookie and auth state.
+
 ### CMS
 For the lecture materials, task handouts and task descriptions, a CMS via the `@nuxt/content` package is used. The following content is managed by this system and deployed automatically upon push:
 - Objects representing the lecture materials:

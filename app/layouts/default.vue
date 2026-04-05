@@ -1,6 +1,11 @@
 <script setup lang="ts">
-const { isAuthenticated, user } = useAuth()
+const { isAuthenticated, user, logout } = useAuth()
 const showLoginHelp = ref(false)
+
+async function handleLogout() {
+  await logout()
+  navigateTo('/')
+}
 
 const authenticatedLinks = [
   [
@@ -49,6 +54,13 @@ const footerLinks = [
           <span class="text-sm mr-3">
             Hello, <strong>{{ user?.firstName }}</strong>!
           </span>
+          <UButton
+            color="neutral"
+            variant="solid"
+            @click="handleLogout"
+          >
+            Log out
+          </UButton>
         </template>
         <template v-else>
           <span class="text-sm text-muted mr-3">Not signed in</span>

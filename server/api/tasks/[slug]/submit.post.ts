@@ -11,33 +11,8 @@ export default defineEventHandler(async (event) => {
   const db = useDB()
 
   // Resolve authenticated student
-  const rawCookie = getCookie(event, 'auth:user')
-  if (!rawCookie) {
-    throw createError({ statusCode: 401, message: 'Not authenticated' })
-  }
-
-  let email: string | null = null
-  try {
-    const parsed = JSON.parse(decodeURIComponent(rawCookie))
-    email = parsed?.email ?? null
-  }
-  catch {
-    throw createError({ statusCode: 401, message: 'Invalid auth cookie' })
-  }
-
-  if (!email) {
-    throw createError({ statusCode: 401, message: 'Not authenticated' })
-  }
-
-  const studentResult = await db.execute({
-    sql: 'SELECT id, public_alias FROM students WHERE email = ?',
-    args: [email]
-  })
-  const student = studentResult.rows[0]
-  if (!student) {
-    throw createError({ statusCode: 404, message: 'Student not found' })
-  }
-  const studentId = student.id as string
+  const student = await requireStudent(event)
+  const studentId = student.id
 
   // Resolve task
   const taskResult = await db.execute({
@@ -116,7 +91,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // Handle public alias
-  if (publicAlias && !student.public_alias) {
+  if (publicAlias && !student.publicAlias) {
     // Check uniqueness
     const aliasCheck = await db.execute({
       sql: 'SELECT COUNT(*) as count FROM students WHERE public_alias = ?',

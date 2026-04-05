@@ -17,37 +17,23 @@ export default defineEventHandler(async (event) => {
   }
   const taskId = task.id as string
 
-  // Resolve student from auth cookie
-  let studentId: string | null = null
-  const rawCookie = getCookie(event, 'auth:user')
-  if (rawCookie) {
-    try {
-      const parsed = JSON.parse(decodeURIComponent(rawCookie))
-      if (parsed?.email) {
-        const studentResult = await db.execute({
-          sql: 'SELECT id FROM students WHERE email = ?',
-          args: [parsed.email]
-        })
-        studentId = (studentResult.rows[0]?.id as string) ?? null
-      }
-    }
-    catch {}
-  }
+  // Resolve student
+  const student = await resolveStudent(event)
 
-  if (!studentId) {
+  if (!student) {
     return { dailyCount: 0, totalCount: 0 }
   }
 
   // Count today's submissions
   const dailyResult = await db.execute({
     sql: 'SELECT COUNT(*) as count FROM submissions WHERE student_id = ? AND task_id = ? AND date(submitted_at) = date(\'now\')',
-    args: [studentId, taskId]
+    args: [student.id, taskId]
   })
 
   // Count total submissions
   const totalResult = await db.execute({
     sql: 'SELECT COUNT(*) as count FROM submissions WHERE student_id = ? AND task_id = ?',
-    args: [studentId, taskId]
+    args: [student.id, taskId]
   })
 
   return {

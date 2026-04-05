@@ -16,22 +16,9 @@ export default defineEventHandler(async (event) => {
     args: [semester.id as string]
   })
 
-  // Try to resolve the authenticated student from the auth cookie
-  let studentId: string | null = null
-  const rawCookie = getCookie(event, 'auth:user')
-  if (rawCookie) {
-    try {
-      const parsed = JSON.parse(decodeURIComponent(rawCookie))
-      if (parsed?.email) {
-        const studentResult = await db.execute({
-          sql: 'SELECT id FROM students WHERE email = ?',
-          args: [parsed.email]
-        })
-        studentId = (studentResult.rows[0]?.id as string) ?? null
-      }
-    }
-    catch {}
-  }
+  // Try to resolve the authenticated student
+  const student = await resolveStudent(event)
+  const studentId = student?.id ?? null
 
   // Get task states for this student
   const taskStates: Record<string, string> = {}

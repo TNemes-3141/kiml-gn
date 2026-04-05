@@ -5,27 +5,26 @@ interface User {
 }
 
 export function useAuth() {
-  const authCookie = useCookie<User | null>('auth:user', {
-    default: () => null,
-    maxAge: 60 * 60 * 24 * 180 // 6 months
-  })
+  const user = useState<User | null>('auth:user', () => null)
+  const isAuthenticated = computed(() => user.value !== null)
 
-  const isAuthenticated = computed(() => authCookie.value !== null)
-  const user = computed(() => authCookie.value)
-
-  async function demoLogin() {
-    const student = await $fetch<User>('/api/demo-login')
-    authCookie.value = student
+  async function login(token: string) {
+    const data = await $fetch<User>('/api/auth/login', {
+      method: 'POST',
+      body: { token }
+    })
+    user.value = data
   }
 
-  function logout() {
-    authCookie.value = null
+  async function logout() {
+    await $fetch('/api/auth/logout', { method: 'POST' })
+    user.value = null
   }
 
   return {
     isAuthenticated: readonly(isAuthenticated),
     user: readonly(user),
-    demoLogin,
+    login,
     logout
   }
 }

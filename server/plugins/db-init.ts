@@ -1,3 +1,7 @@
+import { createHash } from 'node:crypto'
+
+const DEV_TOKEN_HASH = createHash('sha256').update('dev-test-token-kiml-2026').digest('hex')
+
 export default defineNitroPlugin(async () => {
   const db = useDB()
 
@@ -107,8 +111,8 @@ export default defineNitroPlugin(async () => {
     const studentsCount = Number(studentsResult.rows[0]!.count)
     if (studentsCount === 0) {
       await db.execute({
-        sql: 'INSERT INTO students (id, first_name, last_name, email, semester_id) VALUES (?, ?, ?, ?, ?)',
-        args: ['student-demo-1', 'Tamas', 'Nemes', 'tamas@example.com', 'ss2026']
+        sql: 'INSERT INTO students (id, first_name, last_name, email, semester_id, token_hash) VALUES (?, ?, ?, ?, ?, ?)',
+        args: ['student-demo-1', 'Tamas', 'Nemes', 'tamas@example.com', 'ss2026', DEV_TOKEN_HASH]
       })
     }
 
