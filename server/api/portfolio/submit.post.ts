@@ -31,7 +31,7 @@ export default defineEventHandler(async (event) => {
   }
 
   await db.execute({
-    sql: 'UPDATE students SET portfolio_video_link = ? WHERE id = ?',
+    sql: 'UPDATE students SET portfolio_video_link = ?, accepted_portfolio_tos = TRUE, portfolio_tos_accepted_at = CURRENT_TIMESTAMP WHERE id = ?',
     args: [body.videoLink, student.id]
   })
 
