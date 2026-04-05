@@ -41,10 +41,10 @@ const portfolioDeadlineFormatted = computed(() => {
 })
 
 const schema = z.object({
-  videoLink: z.url('Please enter a valid URL.').min(1, 'Video URL is required.'),
-  authorConfirmed: z.literal(true, { error: 'You must confirm authorship.' }),
-  accessConfirmed: z.literal(true, { error: 'You must confirm the video will be accessible.' }),
-  plagiarismConfirmed: z.literal(true, { error: 'You must acknowledge the plagiarism rules.' })
+  videoLink: z.url('Bitte geben Sie eine gültige URL ein.').min(1, 'Video-URL ist erforderlich.'),
+  authorConfirmed: z.literal(true, { error: 'Sie müssen die Urheberschaft bestätigen.' }),
+  accessConfirmed: z.literal(true, { error: 'Sie müssen die Zugänglichkeit des Videos bestätigen.' }),
+  plagiarismConfirmed: z.literal(true, { error: 'Sie müssen die Plagiarismus-Regeln zur Kenntnis nehmen.' })
 })
 
 type Schema = z.output<typeof schema>
@@ -65,12 +65,12 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       method: 'POST',
       body: { videoLink: event.data.videoLink }
     })
-    toast.add({ title: 'Portfolio submitted', description: 'Your portfolio has been submitted successfully.', color: 'success' })
+    toast.add({ title: 'Portfolio eingereicht', description: 'Ihr Portfolio wurde erfolgreich eingereicht.', color: 'success' })
     await refresh()
   }
   catch (err: unknown) {
-    const message = (err as { data?: { message?: string } })?.data?.message ?? 'Submission failed. Please try again.'
-    toast.add({ title: 'Submission failed', description: message, color: 'error' })
+    const message = (err as { data?: { message?: string } })?.data?.message ?? 'Einreichung fehlgeschlagen. Bitte versuchen Sie es erneut.'
+    toast.add({ title: 'Einreichung fehlgeschlagen', description: message, color: 'error' })
   }
   finally {
     submitting.value = false
@@ -81,8 +81,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 <template>
   <UContainer>
     <UPageHero
-      title="Your portfolio"
-      description="The progress of your portfolio for the final submission."
+      title="Ihr Portfolio"
+      description="Der Fortschritt Ihres Portfolios für die Abgabe."
     />
 
     <div class="mx-auto max-w-4xl pb-16">
@@ -91,19 +91,19 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
 
       <!-- Current progress -->
       <h1 class="mb-6 mt-10 text-4xl font-bold">
-        Current progress
+        Aktueller Fortschritt
       </h1>
 
       <div class="flex flex-col gap-5">
         <ProgressIndicator
-          label="Programming tasks passed:"
+          label="Programmieraufgaben bestanden:"
           :value="data?.passedCount ?? 0"
           :max="data?.passingThreshold ?? 1"
           color="primary"
         />
 
         <ProgressIndicator
-          label="Video report URL submitted:"
+          label="Videobericht-URL eingereicht:"
           :value="hasSubmitted ? 1 : 0"
           :max="1"
           color="primary"
@@ -112,7 +112,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         <!-- Portfolio deadline -->
         <div>
           <p class="text-base text-white">
-            Portfolio submission deadline:
+            Abgabefrist für das Portfolio:
           </p>
           <p class="text-2xl font-bold text-white">
             {{ portfolioDeadlineFormatted }}
@@ -126,19 +126,19 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           v-if="hasSubmitted"
           state="success"
           title="Status"
-          message="You have handed in your portfolio successfully! Your submission was received and will be graded."
+          message="Sie haben Ihr Portfolio erfolgreich eingereicht! Ihre Abgabe wurde empfangen und wird bewertet."
         />
         <StatusCard
           v-else
           state="error"
           title="Status"
-          message="You have not finished handing in your portfolio yet and would currently fail the course."
+          message="Sie haben Ihr Portfolio noch nicht vollständig eingereicht und würden den Kurs derzeit nicht bestehen."
         />
       </div>
 
       <!-- Portfolio submission -->
       <h1 class="mb-6 mt-10 text-4xl font-bold">
-        Portfolio submission
+        Portfolioabgabe
       </h1>
 
       <!-- Ineligible -->
@@ -146,13 +146,13 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         v-if="!isEligible"
         class="text-error-400"
       >
-        Portfolio submission not available. You did not pass the required amount of programming tasks.
+        Portfolioabgabe nicht möglich. Sie haben nicht die erforderliche Anzahl an Programmieraufgaben bestanden.
       </p>
 
       <!-- Already submitted: read-only display -->
       <UPageCard v-else-if="hasSubmitted" variant="soft">
         <template #title>
-          Submitted video URL
+          Eingereichte Video-URL
         </template>
         <a
           :href="data?.videoLink ?? ''"
@@ -171,8 +171,8 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
       >
         <UFormField
           name="videoLink"
-          label="Video report URL:"
-          help="Please provide a public link of a video explaining your solution."
+          label="Videobericht-URL:"
+          help="Bitte geben Sie einen öffentlichen Link zu einem Video an, in dem Sie Ihre Lösung erklären."
           required
         >
           <UInput
@@ -185,7 +185,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
         <UFormField name="authorConfirmed">
           <UCheckbox
             v-model="state.authorConfirmed"
-            label="I hereby confirm that I am the sole author of the video above."
+            label="Hiermit bestätige ich, dass ich der/die alleinige Autor/in des oben genannten Videos bin."
             color="neutral"
             required
           />
@@ -195,7 +195,7 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
           <UCheckbox
             v-model="state.accessConfirmed"
             required
-            label="I hereby confirm that the submitted video URL is correct, the video under the URL will be publicly accessible until four weeks after the portfolio submission deadline and the video is not longer than 3 minutes."
+            label="Hiermit bestätige ich, dass die eingereichte Video-URL korrekt ist, das Video unter der URL bis vier Wochen nach der Portfolio-Abgabefrist öffentlich zugänglich sein wird und das Video nicht länger als 3 Minuten ist."
             color="neutral"
             />
         </UFormField>
@@ -208,19 +208,19 @@ async function onSubmit(event: FormSubmitEvent<Schema>) {
               required
             >
               <template #label>
-                <span class="font-semibold">I hereby confirm that I've read and acknowledged the rules regarding plagiarism.</span>
+                <span class="font-semibold">Hiermit bestätige ich, dass ich die Regeln bezüglich Plagiarismus gelesen und zur Kenntnis genommen habe.</span>
               </template>
             </UCheckbox>
           </UFormField>
           <p class="ml-6 mt-1 text-sm text-neutral-400">
-            The video report and all solution code must be original work by the submitting person. You may not copy the work of other students (including work produced by students in previous versions of this course), or share videos/code or provide details on how to solve the task to other students. You may not publish project solutions online. Using work from previous years or by other student's submissions in any capacity is considered plagiarism. Among the code, including those of previous years, we search for similar solutions in order to detect plagiarism. Although not strictly forbidden, we discourage the use of ChatGPT, Gemini or similar code/language generation tools for writing code.
+            Der Videobericht und der gesamte Lösungscode müssen eine eigenständige Arbeit der einreichenden Person sein. Sie dürfen weder die Arbeit anderer Studierender kopieren (einschließlich Arbeiten aus früheren Versionen dieses Kurses), noch Videos/Code weitergeben oder anderen Studierenden Details zur Lösung der Aufgabe mitteilen. Sie dürfen Projektlösungen nicht online veröffentlichen. Die Verwendung von Arbeiten aus früheren Jahren oder von anderen Studierenden gilt als Plagiat. Unter den Abgaben, auch aus früheren Jahren, suchen wir nach ähnlichen Lösungen, um Plagiate zu erkennen. Obwohl nicht ausdrücklich verboten, raten wir von der Verwendung von ChatGPT, Gemini oder ähnlichen Code-/Sprachgenerierungstools zum Schreiben von Code ab.
           </p>
         </div>
 
         <div class="flex justify-end">
           <UButton
             type="submit"
-            label="Submit portfolio"
+            label="Portfolio einreichen"
             color="primary"
             variant="solid"
             :loading="submitting"

@@ -23,12 +23,12 @@ const now = new Date()
 
 function getStatusDisplay(task: Task) {
   const unlocked = new Date(task.unlockTime) <= now
-  if (!unlocked) return { label: 'Locked', color: 'neutral' as const }
+  if (!unlocked) return { label: 'Gesperrt', color: 'neutral' as const }
   switch (task.status) {
-    case 'PASSED': return { label: 'Passed', color: 'success' as const }
-    case 'FAILED': return { label: 'Failed', color: 'error' as const }
-    case 'COMPLETED': return { label: 'Completed', color: 'info' as const }
-    default: return { label: 'Not completed', color: 'warning' as const }
+    case 'PASSED': return { label: 'Bestanden', color: 'success' as const }
+    case 'FAILED': return { label: 'Nicht bestanden', color: 'error' as const }
+    case 'COMPLETED': return { label: 'Abgegeben', color: 'info' as const }
+    default: return { label: 'Nicht abgegeben', color: 'warning' as const }
   }
 }
 
@@ -55,12 +55,12 @@ const columns: TableColumn<Task>[] = [
   },
   {
     accessorKey: 'serialNum',
-    header: 'Task Nr.',
-    cell: ({ row }) => `Task ${row.getValue('serialNum')}`
+    header: 'Aufg. Nr.',
+    cell: ({ row }) => `Aufgabe ${row.getValue('serialNum')}`
   },
   {
     accessorKey: 'title',
-    header: 'Title',
+    header: 'Titel',
     meta: { class: { th: 'w-full', td: 'w-full' } }
   },
   {
@@ -84,10 +84,10 @@ const columns: TableColumn<Task>[] = [
 <template>
   <div class="col-span-2 flex flex-col rounded-xl border border-secondary-500/20 bg-secondary-500/5 p-6">
     <h3 class="text-base font-semibold">
-      Programming tasks
+      Programmieraufgaben
     </h3>
     <p class="mt-1 text-sm text-muted">
-      Overview of assigned tasks and your progress.
+      Übersicht über die gestellten Aufgaben und Ihren Fortschritt.
     </p>
 
     <template v-if="isAuthenticated">
@@ -107,10 +107,10 @@ const columns: TableColumn<Task>[] = [
         />
       </div>
     </template>
-    <div v-else class="flex flex-1 flex-col items-center justify-center gap-4">
+    <div v-else class="flex flex-1 flex-col items-center justify-center gap-4 mt-5">
       <UIcon name="i-lucide-lock" class="text-muted size-14" />
       <p class="text-center text-muted">
-        Sign in to access programming tasks
+        Melden Sie sich an, um auf die Programmieraufgaben zuzugreifen
       </p>
     </div>
   </div>

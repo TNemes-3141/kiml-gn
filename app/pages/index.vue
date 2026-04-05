@@ -11,7 +11,7 @@
     />
 
     <!-- Quick access separator -->
-    <USeparator label="Quick access" class="mx-auto mb-10 max-w-lg" />
+    <USeparator label="Schnellzugriff" class="mx-auto mb-10 max-w-lg" />
 
     <!-- Bento grid -->
     <BentoGrid />

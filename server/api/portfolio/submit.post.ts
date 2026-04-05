@@ -5,7 +5,7 @@ export default defineEventHandler(async (event) => {
 
   // Check not already submitted
   if (student.portfolioVideoLink) {
-    throw createError({ statusCode: 409, message: 'You have already submitted your portfolio.' })
+    throw createError({ statusCode: 409, message: 'Sie haben Ihr Portfolio bereits eingereicht.' })
   }
 
   // Check eligibility: must have enough PASSED tasks
@@ -22,7 +22,7 @@ export default defineEventHandler(async (event) => {
   const passedCount = Number(passedResult.rows[0]?.count ?? 0)
 
   if (passedCount < passingThreshold) {
-    throw createError({ statusCode: 403, message: 'You have not passed the required number of programming tasks.' })
+    throw createError({ statusCode: 403, message: 'Sie haben nicht die erforderliche Anzahl an Programmieraufgaben bestanden.' })
   }
 
   const body = await readBody<{ videoLink: string }>(event)

@@ -28,7 +28,7 @@ export function getLectureSlug(title: string): string {
 }
 
 export function getLectureDisplayTitle(lecture: Lecture): string {
-  return `Lecture ${lecture.order} - ${lecture.title}`
+  return `Einheit ${lecture.order} – ${lecture.title}`
 }
 
 /**
@@ -54,8 +54,8 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-02-16'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/1' },
-      { title: 'Ordinary Least Squares (OLS) Demo', link: 'https://example.com/ols-demo' },
+      { title: 'Folien', link: 'https://example.com/slides/1' },
+      { title: 'Kleinste-Quadrate-Methode (OLS) Demo', link: 'https://example.com/ols-demo' },
       { title: 'Die Kostenfunktion (Animiertes GIF)', link: 'https://example.com/cost-function-gif' }
     ]
   },
@@ -66,7 +66,7 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-01-23'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/2' }
+      { title: 'Folien', link: 'https://example.com/slides/2' }
     ]
   },
   {
@@ -76,17 +76,17 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-01-30'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/3' }
+      { title: 'Folien', link: 'https://example.com/slides/3' }
     ]
   },
   {
-    title: 'Entscheidungsbume',
+    title: 'Entscheidungsbäume',
     icon: 'i-lucide-git-fork',
     order: 4,
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-02-06'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/4' }
+      { title: 'Folien', link: 'https://example.com/slides/4' }
     ]
   },
   {
@@ -96,7 +96,7 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-02-13'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/5' }
+      { title: 'Folien', link: 'https://example.com/slides/5' }
     ]
   },
   {
@@ -106,7 +106,7 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-02-20'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/6' }
+      { title: 'Folien', link: 'https://example.com/slides/6' }
     ]
   },
   {
@@ -116,7 +116,7 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-02-27'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/7' }
+      { title: 'Folien', link: 'https://example.com/slides/7' }
     ]
   },
   {
@@ -126,7 +126,7 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-03-04'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/8' }
+      { title: 'Folien', link: 'https://example.com/slides/8' }
     ]
   },
   {
@@ -136,7 +136,7 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-03-11'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/9' }
+      { title: 'Folien', link: 'https://example.com/slides/9' }
     ]
   },
   {
@@ -146,7 +146,7 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-03-18'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/10' }
+      { title: 'Folien', link: 'https://example.com/slides/10' }
     ]
   },
   {
@@ -156,7 +156,7 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-03-25'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/11' }
+      { title: 'Folien', link: 'https://example.com/slides/11' }
     ]
   },
   {
@@ -166,7 +166,7 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-04-01'),
     materials: [
-      { title: 'Slides', link: 'https://example.com/slides/12' }
+      { title: 'Folien', link: 'https://example.com/slides/12' }
     ]
   }
 ]

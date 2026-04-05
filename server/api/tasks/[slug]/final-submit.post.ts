@@ -40,7 +40,7 @@ export default defineEventHandler(async (event) => {
 
   const score = Number(submission.score)
   if (score < baselineScore) {
-    throw createError({ statusCode: 400, message: 'Selected submission does not pass the baseline score.' })
+    throw createError({ statusCode: 400, message: 'Die ausgewählte Abgabe erreicht nicht den Baseline-Score.' })
   }
 
   // Check not already submitted
@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
     args: [studentId, taskId]
   })
   if (stateResult.rows[0]?.selected_final_submission_id) {
-    throw createError({ statusCode: 409, message: 'You have already submitted your final solution.' })
+    throw createError({ statusCode: 409, message: 'Sie haben Ihre endgültige Lösung bereits abgegeben.' })
   }
 
   // Upsert the task state (the row may not exist yet if submit.post.ts didn't create it)

@@ -1,9 +1,9 @@
 <template>
   <UContainer>
-    <UPageHero title="Privacy notice" />
+    <UPageHero title="Datenschutzhinweis" />
     <div class="mx-auto max-w-4xl pb-16">
       <p class="text-muted">
-        Privacy notice placeholder. Legal text will be added here.
+        Datenschutzhinweis-Platzhalter. Der Rechtstext wird hier ergänzt.
       </p>
     </div>
   </UContainer>

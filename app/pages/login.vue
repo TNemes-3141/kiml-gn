@@ -9,8 +9,8 @@ onMounted(async () => {
 
   if (!token) {
     toast.add({
-      title: 'Login failed',
-      description: 'No token provided. Refer to the instructions in How to log in at the top of the page.',
+      title: 'Anmeldung fehlgeschlagen',
+      description: 'Kein Token angegeben. Beachten Sie die Anleitung unter "Wie melde ich mich an?" oben auf der Seite.',
       color: 'error'
     })
     return navigateTo('/')
@@ -19,16 +19,16 @@ onMounted(async () => {
   try {
     await login(token)
     toast.add({
-      title: 'Logged in successfully!',
+      title: 'Erfolgreich angemeldet!',
       color: 'success'
     })
     return navigateTo('/')
   }
   catch (err: unknown) {
     const message = (err as { data?: { message?: string } })?.data?.message
-      ?? 'Login failed. Please try again.'
+      ?? 'Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.'
     toast.add({
-      title: 'Login failed',
+      title: 'Anmeldung fehlgeschlagen',
       description: message,
       color: 'error'
     })
@@ -45,7 +45,7 @@ onMounted(async () => {
     <div v-if="loading" class="text-center">
       <UIcon name="i-lucide-loader-circle" class="text-primary mb-4 size-10 animate-spin" />
       <p class="text-muted text-sm">
-        Signing in...
+        Anmeldung läuft...
       </p>
     </div>
   </div>

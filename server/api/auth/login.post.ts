@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   if (!student) {
     throw createError({
       statusCode: 401,
-      message: 'Login failed: Account not found. Refer to the instructions in How to log in at the top of the page.'
+      message: 'Anmeldung fehlgeschlagen: Konto nicht gefunden. Beachten Sie die Anleitung unter "Wie melde ich mich an?" oben auf der Seite.'
     })
   }
 
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     if (firstLogin < sixMonthsAgo) {
       throw createError({
         statusCode: 401,
-        message: 'Login failed: Your access link has expired.'
+        message: 'Anmeldung fehlgeschlagen: Ihr Zugangslink ist abgelaufen.'
       })
     }
   }

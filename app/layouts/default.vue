@@ -9,22 +9,22 @@ async function handleLogout() {
 
 const authenticatedLinks = [
   [
-    { label: 'Lecture materials', to: '/materials' },
-    { label: 'Programming tasks', to: '/tasks' },
+    { label: 'Vorlesungsmaterialien', to: '/materials' },
+    { label: 'Programmieraufgaben', to: '/tasks' },
     { label: 'Portfolio', to: '/portfolio' }
   ]
 ]
 
 const unauthenticatedLinks = [
   [
-    { label: 'Lecture materials', to: '/materials' }
+    { label: 'Vorlesungsmaterialien', to: '/materials' }
   ]
 ]
 
 const footerLinks = [
   [
-    { label: 'Imprint', to: '/imprint' },
-    { label: 'Privacy notice', to: '/privacy' }
+    { label: 'Impressum', to: '/imprint' },
+    { label: 'Datenschutz', to: '/privacy' }
   ]
 ]
 </script>
@@ -52,23 +52,23 @@ const footerLinks = [
       <template #right>
         <template v-if="isAuthenticated">
           <span class="text-sm mr-3">
-            Hello, <strong>{{ user?.firstName }}</strong>!
+            Hallo, <strong>{{ user?.firstName }}</strong>!
           </span>
           <UButton
             color="neutral"
             variant="solid"
             @click="handleLogout"
           >
-            Log out
+            Abmelden
           </UButton>
         </template>
         <template v-else>
-          <span class="text-sm text-muted mr-3">Not signed in</span>
+          <span class="text-sm text-muted mr-3">Nicht angemeldet</span>
           <UButton
             color="primary"
             @click="showLoginHelp = true"
           >
-            How to sign in
+            Wie melde ich mich an?
           </UButton>
         </template>
       </template>

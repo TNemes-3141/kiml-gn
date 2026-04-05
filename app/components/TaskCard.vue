@@ -17,17 +17,17 @@ const unlocked = computed(() => new Date(props.task.unlockTime) <= now)
 
 const statusDisplay = computed(() => {
   if (!unlocked.value) {
-    return { label: 'Locked', color: 'neutral' as const, variant: 'subtle' as const }
+    return { label: 'Gesperrt', color: 'neutral' as const, variant: 'subtle' as const }
   }
   switch (props.task.status) {
     case 'PASSED':
-      return { label: 'Passed', color: 'success' as const, variant: 'subtle' as const }
+      return { label: 'Bestanden', color: 'success' as const, variant: 'subtle' as const }
     case 'FAILED':
-      return { label: 'Failed', color: 'error' as const, variant: 'subtle' as const }
+      return { label: 'Nicht bestanden', color: 'error' as const, variant: 'subtle' as const }
     case 'COMPLETED':
-      return { label: 'Completed', color: 'info' as const, variant: 'subtle' as const }
+      return { label: 'Abgegeben', color: 'info' as const, variant: 'subtle' as const }
     default:
-      return { label: 'Not completed', color: 'warning' as const, variant: 'subtle' as const }
+      return { label: 'Nicht abgegeben', color: 'warning' as const, variant: 'subtle' as const }
   }
 })
 
@@ -58,7 +58,7 @@ function formatDateTime(isoString: string): string {
       class="size-5"
     />
     <p class="mt-2 text-2xl font-bold">
-      Task #{{ task.serialNum }}: {{ task.title }}
+      Aufgabe #{{ task.serialNum }}: {{ task.title }}
     </p>
     <div class="mt-4 flex items-center justify-between">
       <div class="flex gap-10">
@@ -75,7 +75,7 @@ function formatDateTime(isoString: string): string {
         </div>
         <div>
           <p class="text-base">
-            Opens at
+            Freischaltung
           </p>
           <p class="mt-2 text-base text-neutral-400">
             {{ formatDateTime(task.unlockTime) }}
@@ -91,7 +91,7 @@ function formatDateTime(isoString: string): string {
         </div>
       </div>
       <UButton
-        label="Open"
+        label="Öffnen"
         icon="i-lucide-arrow-right"
         trailing
         color="neutral"

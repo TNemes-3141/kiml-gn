@@ -11,34 +11,34 @@ const emailHref = computed(() => `mailto:${CONTACT_EMAIL_USER}@${CONTACT_EMAIL_D
 <template>
   <UModal
     v-model:open="open"
-    title="How to sign in"
+    title="Wie melde ich mich an?"
   >
     <template #body>
       <div class="space-y-4 p-4">
         <ol class="text-muted list-decimal space-y-2 pl-5">
           <li>
-            At the beginning of the semester, you received an email to your university
-            address containing a personal sign-in link.
+            Zu Beginn des Semesters haben Sie eine E-Mail an Ihre Hochschul-Adresse
+            mit einem persönlichen Anmeldelink erhalten.
           </li>
           <li>
-            Open that email and click the link. You will be signed in automatically and
-            redirected to the home page.
+            Öffnen Sie diese E-Mail und klicken Sie auf den Link. Sie werden automatisch
+            angemeldet und auf die Startseite weitergeleitet.
           </li>
           <li>
-            Your session lasts for the entire semester. As long as you use the same browser
-            and do not clear your cookies, you will stay signed in.
+            Ihre Sitzung gilt für das gesamte Semester. Solange Sie denselben Browser
+            verwenden und Ihre Cookies nicht löschen, bleiben Sie angemeldet.
           </li>
           <li>
-            If you switch to a different browser or device, or if you clear your cookies,
-            simply click the link in the original email again.
+            Wenn Sie den Browser oder das Gerät wechseln oder Ihre Cookies löschen,
+            klicken Sie einfach erneut auf den Link in der ursprünglichen E-Mail.
           </li>
         </ol>
 
         <USeparator />
 
         <p class="text-muted text-sm">
-          If you have not received the email, cannot find it, or experience any other
-          issues signing in, please contact this email address with a detailed description of your issue:<br>
+          Falls Sie die E-Mail nicht erhalten haben, sie nicht finden oder andere
+          Probleme bei der Anmeldung auftreten, kontaktieren Sie bitte folgende E-Mail-Adresse mit einer detaillierten Beschreibung Ihres Problems:<br>
           <a
             :href="emailHref"
             class="text-primary hover:underline"
@@ -54,7 +54,7 @@ const emailHref = computed(() => `mailto:${CONTACT_EMAIL_USER}@${CONTACT_EMAIL_D
           to="/login?token=dev-test-token-kiml-2026"
           @click="open = false"
         >
-          Sign in (dev)
+          Anmelden (dev)
         </UButton>
       </div>
     </template>

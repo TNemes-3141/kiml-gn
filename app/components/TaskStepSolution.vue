@@ -51,11 +51,11 @@ const pagination = ref({ pageIndex: 0, pageSize: 5 })
 const submissionColumns: TableColumn<Submission>[] = [
   {
     accessorKey: 'serialNum',
-    header: 'Number'
+    header: 'Nr.'
   },
   {
     accessorKey: 'submittedAt',
-    header: 'Date and time',
+    header: 'Datum und Uhrzeit',
     meta: { class: { th: 'w-full', td: 'w-full' } },
     cell: ({ row }) => {
       const val = row.getValue('submittedAt') as string
@@ -77,7 +77,7 @@ const submissionColumns: TableColumn<Submission>[] = [
   },
   {
     id: 'passesBaseline',
-    header: 'Passes baseline?',
+    header: 'Baseline erreicht?',
     meta: { class: { th: 'text-right', td: 'text-right' } },
     accessorKey: 'score'
   }
@@ -109,15 +109,15 @@ const schema = computed(() => {
   const base = z.object({
     solutionFile: z
       .instanceof(File, { message: 'Please select a solution file.' })
-      .refine(file => file.name.toLowerCase().endsWith('.csv'), { message: 'Solution file must be a .csv file.' }),
+      .refine(file => file.name.toLowerCase().endsWith('.csv'), { message: 'Die Lösungsdatei muss eine .csv-Datei sein.' }),
     sourceCodeFile: z
-      .instanceof(File, { message: 'Please select a source code file.' })
+      .instanceof(File, { message: 'Bitte wählen Sie eine Quellcode-Datei aus.' })
       .refine(
         file => file.name.toLowerCase().endsWith('.py') || file.name.toLowerCase().endsWith('.ipynb'),
-        { message: 'Source code must be a .py or .ipynb file.' }
+        { message: 'Der Quellcode muss eine .py- oder .ipynb-Datei sein.' }
       ),
     publicAlias: needsAlias.value
-      ? z.string().min(1, 'Public alias is required.')
+      ? z.string().min(1, 'Öffentlicher Alias ist erforderlich.')
       : z.string().optional()
   })
   return base
@@ -153,8 +153,8 @@ async function onSubmit(event: FormSubmitEvent<{ solutionFile: File, sourceCodeF
     })
 
     const score: number | null = result?.score ?? null
-    const scoreText = score !== null ? ` Your score is ${score.toFixed(3)}.` : ''
-    toast.add({ title: 'Submission successful', description: `Your solution has been submitted.${scoreText}`, color: 'success' })
+    const scoreText = score !== null ? ` Ihr Score beträgt ${score.toFixed(3)}.` : ''
+    toast.add({ title: 'Lösung eingereicht', description: `Ihre Lösung wurde erfolgreich eingereicht.${scoreText}`, color: 'success' })
 
     // Reset form
     state.solutionFile = undefined
@@ -166,8 +166,8 @@ async function onSubmit(event: FormSubmitEvent<{ solutionFile: File, sourceCodeF
     emit('submitted')
   }
   catch (err: unknown) {
-    const message = (err as { data?: { message?: string } })?.data?.message ?? 'Submission failed. Please try again.'
-    toast.add({ title: 'Submission failed', description: message, color: 'error' })
+    const message = (err as { data?: { message?: string } })?.data?.message ?? 'Einreichung fehlgeschlagen. Bitte versuchen Sie es erneut.'
+    toast.add({ title: 'Einreichung fehlgeschlagen', description: message, color: 'error' })
   }
   finally {
     submitting.value = false
@@ -188,7 +188,7 @@ function clearForm() {
       <!-- Daily submissions limit -->
       <div>
         <p class="mb-1 text-base text-white">
-          Limit for uploaded solutions today (resets at 23:59:59):
+          Limit für hochgeladene Lösungen heute (Reset um 23:59:59):
           <span class="font-bold">{{ stats?.dailyCount ?? 0 }} / {{ task.maxDailySubmissions }}</span>
         </p>
         <UProgress
@@ -201,7 +201,7 @@ function clearForm() {
       <!-- Total submissions limit -->
       <div>
         <p class="mb-1 text-base text-white">
-          Limit for uploaded solutions in total:
+          Limit für hochgeladene Lösungen insgesamt:
           <span class="font-bold">{{ stats?.totalCount ?? 0 }} / {{ task.maxOverallSubmissions }}</span>
         </p>
         <UProgress
@@ -214,7 +214,7 @@ function clearForm() {
       <!-- Baseline score -->
       <div>
         <p class="text-base text-white">
-          Baseline to beat:
+          Zu erreichende Baseline:
         </p>
         <p class="text-2xl font-bold text-white">
           {{ task.baselineScore }}
@@ -227,29 +227,29 @@ function clearForm() {
       <!-- Solution submission form -->
       <UPageCard variant="soft">
         <template #title>
-          Solution submission
+          Lösung einreichen
         </template>
         <template #description>
-          Upload your solution file (generated predictions) and your source code and press "Make a submission".
+          Laden Sie Ihre Lösungsdatei (generierte Vorhersagen) und Ihren Quellcode hoch und drücken Sie "Lösung einreichen".
         </template>
 
         <UForm :schema="schema" :state="state" class="flex flex-col gap-4" @submit="onSubmit">
-          <UFormField name="solutionFile" label="Solution file" required>
+          <UFormField name="solutionFile" label="Lösungsdatei" required>
             <UFileUpload
               v-model="state.solutionFile"
               accept=".csv"
-              label="Solution file"
-              description="Output predictions from your solution (.CSV)"
+              label="Lösungsdatei"
+              description="Ausgabe-Vorhersagen Ihrer Lösung (.CSV)"
               color="secondary"
             />
           </UFormField>
 
-          <UFormField name="sourceCodeFile" label="Source code" required>
+          <UFormField name="sourceCodeFile" label="Quellcode" required>
             <UFileUpload
               v-model="state.sourceCodeFile"
               accept=".py,.ipynb"
-              label="Source code"
-              description="The code you wrote to generate your solution (.PY, .IPYNB)"
+              label="Quellcode"
+              description="Der Code, mit dem Sie Ihre Lösung erstellt haben (.PY, .IPYNB)"
               color="secondary"
             />
           </UFormField>
@@ -257,16 +257,16 @@ function clearForm() {
           <UFormField
             v-if="needsAlias"
             name="publicAlias"
-            label="Public alias for leaderboard"
-            description="(Caution: You can only choose this once!)"
+            label="Öffentlicher Alias für die Bestenliste"
+            description="(Achtung: Sie können dies nur einmal wählen!)"
             required
           >
             <UInput v-model="state.publicAlias" />
           </UFormField>
 
           <div class="flex justify-end gap-2">
-            <UButton label="Clear" color="neutral" variant="outline" @click="clearForm" />
-            <UButton type="submit" label="Make a submission" color="neutral" variant="solid" :loading="submitting" />
+            <UButton label="Zurücksetzen" color="neutral" variant="outline" @click="clearForm" />
+            <UButton type="submit" label="Lösung einreichen" color="neutral" variant="solid" :loading="submitting" />
           </div>
         </UForm>
       </UPageCard>
@@ -274,7 +274,7 @@ function clearForm() {
       <!-- Your solutions table -->
       <UPageCard variant="soft">
         <template #title>
-          Your solutions
+          Ihre Lösungen
         </template>
 
         <UTable
@@ -294,13 +294,13 @@ function clearForm() {
               <template v-if="row.original.score !== null">
                 <UBadge
                   v-if="row.original.score >= task.baselineScore"
-                  label="Yes"
+                  label="Ja"
                   color="success"
                   variant="subtle"
                 />
                 <UBadge
                   v-else
-                  label="No"
+                  label="Nein"
                   color="error"
                   variant="subtle"
                 />
@@ -325,7 +325,7 @@ function clearForm() {
     <!-- Deadline passed message -->
     <UPageCard v-else variant="soft">
       <p class="text-neutral-400">
-        Task is closed; no more solution uploads are allowed.
+        Die Aufgabe ist abgeschlossen; weitere Lösungen können nicht mehr hochgeladen werden.
       </p>
     </UPageCard>
 
@@ -335,7 +335,7 @@ function clearForm() {
         <UIcon name="i-lucide-trophy" class="text-primary-400" />
       </template>
       <template #title>
-        Leaderboard
+        Bestenliste
       </template>
 
       <UTable

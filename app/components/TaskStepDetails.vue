@@ -11,17 +11,17 @@ defineProps<{
 <template>
   <div class="flex flex-col gap-4">
     <!-- Task description card -->
-    <ContentRendererCard :content="description" title="Task description" />
+    <ContentRendererCard :content="description" title="Aufgabenbeschreibung" />
 
     <!-- Task materials card -->
     <UPageCard variant="soft">
       <template #title>
-        Task materials
+        Aufgabenmaterialien
       </template>
       <div class="flex flex-col gap-3">
         <UButton
           icon="i-lucide-file-archive"
-          label="Download handout files"
+          label="Aufgabendateien herunterladen"
           color="secondary"
           variant="soft"
           size="lg"
@@ -32,7 +32,7 @@ defineProps<{
         />
         <UButton
           icon="i-lucide-globe"
-          label="Edit online in Google Colab"
+          label="Online in Google Colab bearbeiten"
           color="secondary"
           variant="soft"
           size="lg"
