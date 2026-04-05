@@ -16,6 +16,8 @@ const heroTitle = computed(() =>
   task.value ? `Aufgabe #${task.value.serialNum}: ${task.value.title}` : ''
 )
 
+useHead({ title: heroTitle })
+
 const STEP_DETAILS = 'details'
 const STEP_SOLUTION = 'solution'
 const STEP_SUBMISSION = 'submission'

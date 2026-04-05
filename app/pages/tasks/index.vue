@@ -3,6 +3,8 @@ definePageMeta({
   middleware: 'auth'
 })
 
+useHead({ title: 'Programmieraufgaben' })
+
 interface TasksData {
   semester: {
     id: string

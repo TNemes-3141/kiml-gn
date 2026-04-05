@@ -2,6 +2,8 @@
 const route = useRoute()
 const toast = useToast()
 const { login } = useAuth()
+useHead({ title: 'Anmeldung' })
+
 const loading = ref(true)
 
 onMounted(async () => {

@@ -1,6 +1,8 @@
 <script setup lang="ts">
 import { getLectureSlug, getLectureDisplayTitle, getValidatedLectures, type Semester } from '~/data/lectures'
 
+useHead({ title: 'Vorlesungsmaterialien' })
+
 const { data: semesters } = await useFetch<Semester[]>('/api/semesters')
 
 const now = new Date()

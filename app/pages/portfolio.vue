@@ -6,6 +6,8 @@ definePageMeta({
   middleware: 'auth'
 })
 
+useHead({ title: 'Portfolio' })
+
 const toast = useToast()
 
 const { data, refresh } = await useFetch<{

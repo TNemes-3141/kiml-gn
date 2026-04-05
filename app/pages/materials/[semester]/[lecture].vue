@@ -21,6 +21,10 @@ const lecture = computed(() =>
   )
 )
 
+useHead({
+  title: computed(() => lecture.value ? getLectureDisplayTitle(lecture.value) : 'Materialien')
+})
+
 if (!semester.value || !lecture.value) {
   throw createError({ statusCode: 404, statusMessage: 'Lecture not found' })
 }
