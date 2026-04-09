@@ -54,6 +54,9 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-04-09'),
     materials: [
+      { title: 'The map of artificial intelligence', link: 'http://medium.com/swlh/the-map-of-artificial-intelligence-2020-2c4f446f4e43' },
+      { title: 'Eine kurze Geschichte der KI', link: 'https://mebis.bycs.de/beitrag/ki-geschichte-der-ki' },
+      { title: 'KI-"Chatbot" ELIZA', link: 'https://anthay.github.io/eliza.html' }
     ]
   },
   {
