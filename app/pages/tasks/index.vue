@@ -60,7 +60,7 @@ function dismissInfoPermanently() {
       >
         <UIcon name="i-lucide-info" class="mb-2 size-5 text-secondary-400" />
         <p class="text-[15px] leading-6 text-secondary-300">
-          Hier sehen Sie alle Programmieraufgaben, die im Laufe des Semesters gestellt werden. Ein blaues offenes Schloss-Symbol zeigt die Aufgaben an, die derzeit bearbeitet werden können. Bitte beachten Sie die Abgabefristen. Nur Aufgaben mit dem Status "Abgegeben" wurden korrekt eingereicht und werden bewertet (bestanden/nicht bestanden). Bitte beachten Sie, dass Sie mindestens {{ data?.semester?.passingThreshold ?? 0 }} von {{ data?.totalTasks ?? 0 }} Aufgaben bestehen müssen, um Ihr Portfolio abgeben zu können.
+          Hier sehen Sie alle Programmieraufgaben, die im Laufe des Semesters gestellt werden. Ein blaues offenes Schloss-Symbol zeigt die Aufgaben an, die derzeit bearbeitet werden können. Bitte beachten Sie die Abgabefristen. Nur Aufgaben mit dem Status "Abgegeben" wurden korrekt eingereicht und werden bewertet (bestanden/nicht bestanden). Bitte beachten Sie, dass Sie mindestens {{ data?.semester?.passingThreshold ?? 0 }} von {{ (data?.totalTasks ?? 0) - 1 }} Aufgaben bestehen müssen, um Ihr Portfolio abgeben zu können.
         </p>
         <div class="mt-4 flex justify-end gap-2">
           <UButton label="Ausblenden" color="secondary" size="sm" @click="dismissInfo" />
