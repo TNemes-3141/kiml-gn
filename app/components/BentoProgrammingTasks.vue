@@ -82,7 +82,7 @@ const columns: TableColumn<Task>[] = [
 </script>
 
 <template>
-  <div class="col-span-2 flex flex-col rounded-xl border border-secondary-500/20 bg-secondary-500/5 p-6">
+  <div class="col-span-3 flex flex-col rounded-xl border border-secondary-500/20 bg-secondary-500/5 p-6">
     <h3 class="text-base font-semibold">
       Programmieraufgaben
     </h3>

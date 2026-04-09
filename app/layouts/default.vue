@@ -11,7 +11,7 @@ const authenticatedLinks = [
   [
     { label: 'Vorlesungsmaterialien', to: '/materials' },
     { label: 'Programmieraufgaben', to: '/tasks' },
-    { label: 'Portfolio', to: '/portfolio' }
+    /*{ label: 'Portfolio', to: '/portfolio' }*/
   ]
 ]
 
