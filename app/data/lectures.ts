@@ -66,6 +66,12 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-04-16'),
     materials: [
+      { title: 'Synaptische Plastizität (Video)', link: 'https://www.youtube.com/watch?v=EGKTH60rvoU' },
+      { title: 'Lineare Regression (Demo)', link: 'https://www.desmos.com/calculator/uhrhuaxu3m' },
+      { title: 'Die Kostenfunktion (Animation)', link: 'https://gifyu.com/image/SGlgS' },
+      { title: 'Demonstration des Mark I Perzeptron', link: 'https://www.youtube.com/watch?v=cNxadbrN_aI' },
+      { title: 'Mitmachübung: Interaktives Modell eines Perzeptrons', link: 'https://tnemes-3141.github.io/perzeptron-demo/' },
+      { title: 'Datensatz: Hintergrund- und Schriftfarben (Demo)', link: 'https://www.desmos.com/3d/hasp8zptfn' }
     ]
   },
   {
