@@ -75,7 +75,7 @@ export const lectures: Lecture[] = [
     ]
   },
   {
-    title: 'Neuronale Netzwerke, Backpropagation',
+    title: 'MLP, Aktivierung, Neuronale Netzwerke',
     icon: 'i-lucide-brain-circuit',
     order: 3,
     semesterId: 'ss2026',
@@ -88,7 +88,7 @@ export const lectures: Lecture[] = [
     ]
   },
   {
-    title: 'Logistischer Fehler, Klassifikation, SVMs',
+    title: 'Backpropagation, Klassifikation, SVMs',
     icon: 'i-lucide-fold-vertical',
     order: 4,
     semesterId: 'ss2026',
