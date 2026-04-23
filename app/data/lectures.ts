@@ -81,6 +81,10 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-04-23'),
     materials: [
+      { title: 'Sigmoid und ReLU (Demo)', link: 'https://www.desmos.com/calculator/1b6fgaylde' },
+      { title: 'Gradient Descent (Animation)', link: 'https://gifyu.com/image/SGlg6' },
+      { title: 'Mitmachübung: Training eines neuronalen Netzwerks', link: 'https://colab.research.google.com/drive/1HVMc-fIU4gWD0SiswDBzVSRafJzcFyaX?usp=sharing' },
+      { title: 'Videoreihe: Neural Networks von 3Blue1Brown', link: 'https://www.youtube.com/playlist?list=PLgxo3DDiqnvAmMOTzZbgD9d4gtQ9V7Lig' },
     ]
   },
   {
