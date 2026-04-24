@@ -3,11 +3,6 @@ title: "Aufgabe #1: Neuronale Netzwerke"
 slug: neuronale-netzwerke
 ---
 
----
-title: "Aufgabe #1: Neuronale Netzwerke"
-slug: aufgabe-1-neuronale-netzwerke
----
-
 ## Hintergrund
 In dieser Aufgabe schlüpfen Sie in die Rolle eines KI-Beraters, der von einem Schmuckgroßhändler engagiert wurde. 
 
@@ -26,6 +21,8 @@ Für das Training Ihres Modells verwenden wir eine bereinigte Version des klassi
 
 Das Laden des Datensatzes und dessen Vorbereitung ist bereits gegeben.
 Quelle des ursprünglichen Datensatzes: https://www.kaggle.com/datasets/shivam2503/diamonds/data
+
+---
 
 ## Anleitung: Bearbeitung des Neuronalen Netzwerks und Hyperparameter
 Ihre Aufgabe besteht darin, das neuronale Netzwerk zu definieren und Hyperparameter für das Training festzulegen (z.B. die Lernrate, die Kostenfunktion und die Anzahl der Gradient Descent-Epochen). Um Änderungen am neuronalen Netzwerk vorzunehmen, müssen Sie lediglich den speziell markierten **Block 3** im bereitgestellten Skript bearbeiten. Dieser sieht in etwa so aus:
@@ -82,6 +79,8 @@ Die Kostenfunktion (Loss Function) bewertet, wie gut das Modell während des Tra
 
 - `KOSTENFUNKTION = 'mae'` (*mean absolute error*): Berechnet den durchschnittlichen absoluten Fehler zwischen den vorhergesagten und den tatsächlichen Werten. Eine solide Wahl für die meisten Regressionsprobleme.
 - `KOSTENFUNKTION = 'mse'` (*mean squared error*): Berechnet den durchschnittlichen quadrierten Fehler. Dies ist eine gute Wahl, wenn große Vorhersagefehler besonders stark bestraft werden sollen.
+
+---
 
 ## Bewertung
 Sobald Sie Ihr Modell trainiert haben, wird das Skript eine Datei namens `result.csv` generieren, die Sie auf der Plattform hochladen. Unser Server vergleicht dann Ihre vorhergesagten Preise ($\hat{y}$) mit den tatsächlichen, versteckten Preisen ($y$). Ihre Abgabe wird anhand des Determinationskoeffizienten ($R^2$-Score) bewertet. Dieser misst, wie viel Prozent der Varianz der echten Preise Ihr Modell erklären kann.
