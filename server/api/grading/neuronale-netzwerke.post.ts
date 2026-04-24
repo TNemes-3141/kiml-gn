@@ -18,8 +18,8 @@ import type { GradingRequest, GradingResponse } from '../../utils/grading'
 export default defineEventHandler(async (event): Promise<GradingResponse> => {
   const body = await readBody<GradingRequest>(event)
 
-  const groundTruth = parseSingleColumnCsv(body.masterCsv, 'price_CHF')
-  const predictions = parseSingleColumnCsv(body.studentCsv, 'price_CHF')
+  const groundTruth = parseSingleColumnCsv(body.masterCsv, 'price')
+  const predictions = parseSingleColumnCsv(body.studentCsv, 'price')
 
   if (groundTruth.length === 0) {
     throw createError({ statusCode: 400, message: 'Master CSV is empty.' })
@@ -40,6 +40,6 @@ export default defineEventHandler(async (event): Promise<GradingResponse> => {
     ssTot += (groundTruth[i]! - mean) ** 2
   }
 
-  const r2 = ssTot === 0 ? 1 : Math.max(0, 1 - ssRes / ssTot)
+  const r2 = ssTot === 0 ? 1 : (1 - ssRes / ssTot)
   return { score: Math.round(r2 * 1000) / 1000 }
 })
