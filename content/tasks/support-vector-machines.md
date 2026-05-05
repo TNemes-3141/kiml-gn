@@ -4,7 +4,7 @@ slug: support-vector-machines
 ---
 
 ## Hintergrund
-Sie sind gerade als Junior Machine Learning Engineers von Spotify engagiert worden. Ihre erste Aufgabe ist es, die autommatische Playlist-Erstellung zu optimieren, um die über 60.000 täglich neu hochgeladenen Songs zu bewältigen.
+Sie sind gerade als Junior Machine Learning Engineers von Spotify engagiert worden. Ihre erste Aufgabe ist es, die automatische Playlist-Erstellung zu optimieren, um die über 60.000 täglich neu hochgeladenen Songs zu bewältigen.
 
 Anstatt sich auf manuelle Playlists zu verlassen, sollen Sie einen Algorithmus trainieren, der neu hochgeladene Tracks basierend auf ihren rein mathematischen Audio-Eigenschaften automatisch kategorisiert. Da wir hier zwischen zwei festen Kategorien ("Acoustic/Chill" oder "High-Energy Party") unterscheiden möchten, handelt es sich hierbei um ein **Klassifikationsproblem**. Ihre Aufgabe ist es, die Hyperparameter einer Support Vector Machine (SVM) so anzupassen, dass das Modell lernt, die Vibe-Grenze zwischen diesen Genres präzise zu ziehen.
 
