@@ -84,7 +84,6 @@ export const lectures: Lecture[] = [
       { title: 'Sigmoid und ReLU (Demo)', link: 'https://www.desmos.com/calculator/1b6fgaylde' },
       { title: 'Gradient Descent (Animation)', link: 'https://gifyu.com/image/SGlg6' },
       { title: 'Mitmachübung: Training eines neuronalen Netzwerks', link: 'https://colab.research.google.com/drive/1HVMc-fIU4gWD0SiswDBzVSRafJzcFyaX?usp=sharing' },
-      { title: 'Videoreihe: Neural Networks von 3Blue1Brown', link: 'https://www.youtube.com/playlist?list=PLgxo3DDiqnvAmMOTzZbgD9d4gtQ9V7Lig' },
     ]
   },
   {
@@ -94,6 +93,10 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-04-30'),
     materials: [
+      { title: 'Videoreihe: Neural Networks von 3Blue1Brown', link: 'https://www.youtube.com/playlist?list=PLgxo3DDiqnvAmMOTzZbgD9d4gtQ9V7Lig' },
+      { title: 'Kostenfunktionen für Klassifizierung (Demo)', link: 'https://www.desmos.com/calculator/hgh4bnrwxr' },
+      { title: 'Mitmachübung: Interaktive Demo für SVMs', link: 'https://greitemann.dev/svm-demo' },
+      { title: 'Python Fiddle', link: 'https://python-fiddle.com/' },
     ]
   },
   {
@@ -101,8 +104,13 @@ export const lectures: Lecture[] = [
     icon: 'i-lucide-chart-scatter',
     order: 5,
     semesterId: 'ss2026',
-    unlockDateTime: new Date('2026-05-07'),
+    unlockDateTime: new Date('2026-05-06'),
     materials: [
+      { title: 'Einfluss des Parameters "k" in KNN (Animation)', link: 'https://gifyu.com/image/SGnbt' },
+      { title: 'Mitmachübung: K-means zum Ausprobieren', link: 'http://alekseynp.com/viz/k-means.html' },
+      { title: 'Python Fiddle', link: 'https://python-fiddle.com/' },
+      { title: 'Mitmachübung: K-means++ in der Praxis', link: 'https://colab.research.google.com/drive/1oefWQgIqo_Q0rxkLMv_i5El__DQHOhPS' },
+      { title: 'Regularisierung in K-means', link: 'https://www.desmos.com/calculator/3efnnk7k8b' },
     ]
   },
   {
