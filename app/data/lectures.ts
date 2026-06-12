@@ -120,6 +120,8 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-05-21'),
     materials: [
+      { title: "Splitting in Decision Trees (Animation)", link: "https://gifyu.com/image/SGl4j"},
+      { title: "Demo für DTL-Komplexität", link: "https://www.desmos.com/calculator/wlt2aaf15m"},
     ]
   },
   {
@@ -129,6 +131,10 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-05-28'),
     materials: [
+      { title: "Flappy Bird-Spielumgebung (Animation)", link: "https://gifyu.com/image/SGl4r"},
+      { title: "Einfluss des Discount-Faktors Gamma (Demo)", link: "https://www.desmos.com/calculator/iuddowpn8s"},
+      { title: "Mitmachübung: Monte Carlo-Simulation", link: "https://graui.de/code/montePi/"},
+      { title: "Mitmachübung: Frozen Lake-Game", link: "https://tnemes-3141.github.io/q-learning-demo/"},
     ]
   },
   {
@@ -138,6 +144,8 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-06-04'),
     materials: [
+      { title: "Installation von Orange Data Mining", link: "https://orangedatamining.com/download/"},
+      { title: "Mitmachübung: Vor- und Nachbereitung eines Datensatzes", link: "https://colab.research.google.com/drive/1UBxYEcDAxBGhA6bmIs_wVVLvnvP-GU1h/"},
     ]
   },
   {
@@ -147,10 +155,13 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-06-11'),
     materials: [
+      { title: "Fashion-MNIST Inspektor", link: "https://huggingface.co/datasets/zalando-datasets/fashion_mnist/viewer" },
+      { title: "Mitmachübung: Kernels zum Ausprobieren", link: "https://editor.p5js.org/MaschinenNah/full/PZYCjAsie" },
+      { title: "Mitmachübung: CNN-Explainer", link: "https://poloclub.github.io/cnn-explainer/" },
     ]
   },
   {
-    title: 'Object detection, Segmentation',
+    title: 'Generative KI, Bildgenerierung',
     icon: 'i-lucide-image',
     order: 10,
     semesterId: 'ss2026',
@@ -159,7 +170,7 @@ export const lectures: Lecture[] = [
     ]
   },
   {
-    title: 'Generative KI, Large Language Models',
+    title: 'Object detection, Large Language Models',
     icon: 'i-lucide-brush',
     order: 11,
     semesterId: 'ss2026',
