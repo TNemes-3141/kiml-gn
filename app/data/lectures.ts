@@ -167,6 +167,10 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-06-18'),
     materials: [
+      { title: "Morphing durch Interpolation im latenten Raum (Video)", link: "https://www.youtube.com/watch?v=G06dEcZ-QTg&t=85s" },
+      { title: "GAN-Demo mit pix2pix zum Ausprobieren", link: "https://mitmedialab.github.io/GAN-play/" },
+      { title: "DeepDream-Generator", link: "https://deepdreamgenerator.com/" },
+      { title: "Artikel über Diffusion-Modelle", link: "https://theaisummer.com/diffusion-models/" },
     ]
   },
   {
@@ -176,6 +180,11 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-06-25'),
     materials: [
+      { title: "Labeling-Demo für die Annotierung für Object detection", link: "https://labelstud.io/playground/" },
+      { title: "Informationsfluss durch eine LSTM-Zelle (Animation)", link: "https://gifyu.com/image/bdpJQ" },
+      { title: "Attention und Transformers (Videoreihe) von StatQuest", link: "https://www.youtube.com/watch?v=PSs6nxngL6k&list=PLgxo3DDiqnvA72eCg3Feqn0D7ooEu1lgB" },
+      { title: "Attention und Transformers (Videoreihe) von 3Blue1Brown", link: "https://www.youtube.com/watch?v=wjZofJX0v4M&list=PLgxo3DDiqnvCozXT5wbttuszwPV0CdF8d" },
+      { title: "Machine Learning-Glossar", link: "https://developers.google.com/machine-learning/glossary?hl=de" },
     ]
   },
   {
