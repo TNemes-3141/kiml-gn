@@ -195,10 +195,14 @@ export const lectures: Lecture[] = [
     unlockDateTime: new Date('2026-07-02'),
     materials: [
       { title: "Design-Muster für Agenten (Online-Artikel)", link: "https://machinelearningmastery.com/choosing-the-right-agentic-design-pattern-a-decision-tree-approach/" },
-      { title: "n8n: Open-source-Editor für KI-Agenten und sequentielle Workflows", link: "https://github.com/n8n-io/n8n" },
+      { title: "Tool-Calling für Agenten in der Tiefe (Online-Artikel)", link: "https://machinelearningmastery.com/the-roadmap-to-mastering-tool-calling-in-ai-agents/" },
       { title: "Offizielle MCP-Dokumentation", link: "https://modelcontextprotocol.io/docs/getting-started/intro" },
       { title: "Agent2Agent-Spezifikation und Beispiel", link: "https://a2a-protocol.org/latest/" },
-      { title: "Tool-Calling für Agenten in der Tiefe (Online-Artikel)", link: "https://machinelearningmastery.com/the-roadmap-to-mastering-tool-calling-in-ai-agents/" },
+      { title: "Offene Agent Skills-Spezifikagtion", link: "https://agentskills.io/specification" },
+      { title: "n8n: Open-source-Editor für KI-Agenten und sequentielle Workflows", link: "https://github.com/n8n-io/n8n" },
+      { title: "Flowise: Open-source-Editor für Multi-Agent-Workflows", link: "https://github.com/FlowiseAI/Flowise" },
+      { title: "Dify: Open-source-Editor für KI-Agenten mit RAG", link: "https://github.com/langgenius/dify/" },
+      { title: "Open-Claw: Selbst hostbarer KI-Agent mit Anbindung an Messaging-Apps", link: "https://github.com/openclaw/openclaw" },
     ]
   },
   {
