@@ -194,6 +194,11 @@ export const lectures: Lecture[] = [
     semesterId: 'ss2026',
     unlockDateTime: new Date('2026-07-02'),
     materials: [
+      { title: "Design-Muster für Agenten (Online-Artikel)", link: "https://machinelearningmastery.com/choosing-the-right-agentic-design-pattern-a-decision-tree-approach/" },
+      { title: "n8n: Open-source-Editor für KI-Agenten und sequentielle Workflows", link: "https://github.com/n8n-io/n8n" },
+      { title: "Offizielle MCP-Dokumentation", link: "https://modelcontextprotocol.io/docs/getting-started/intro" },
+      { title: "Agent2Agent-Spezifikation und Beispiel", link: "https://a2a-protocol.org/latest/" },
+      { title: "Tool-Calling für Agenten in der Tiefe (Online-Artikel)", link: "https://machinelearningmastery.com/the-roadmap-to-mastering-tool-calling-in-ai-agents/" },
     ]
   },
   {
