@@ -60,6 +60,21 @@ export const lectures: Lecture[] = [
     ]
   },
   {
+    title: 'Biologischer Hintergrund, Lineare Regression, Perzeptron',
+    icon: 'i-lucide-sprout',
+    order: 2,
+    semesterId: 'ws2026',
+    unlockDateTime: new Date('2026-10-15'),
+    materials: [
+      { title: 'Synaptische Plastizität (Video)', link: 'https://www.youtube.com/watch?v=EGKTH60rvoU' },
+      { title: 'Lineare Regression (Demo)', link: 'https://www.desmos.com/calculator/uhrhuaxu3m' },
+      { title: 'Die Kostenfunktion (Animation)', link: 'https://gifyu.com/image/SGlgS' },
+      { title: 'Demonstration des Mark I Perzeptron', link: 'https://www.youtube.com/watch?v=cNxadbrN_aI' },
+      { title: 'Mitmachübung: Interaktives Modell eines Perzeptrons', link: 'https://tnemes-3141.github.io/perzeptron-demo/' },
+      { title: 'Datensatz: Hintergrund- und Schriftfarben (Demo)', link: 'https://www.desmos.com/3d/hasp8zptfn' }
+    ]
+  },
+  {
     title: 'Einstieg',
     icon: 'i-lucide-info',
     order: 1,
