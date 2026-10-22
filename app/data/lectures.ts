@@ -75,6 +75,18 @@ export const lectures: Lecture[] = [
     ]
   },
   {
+    title: 'MLP, Aktivierung, Neuronale Netzwerke',
+    icon: 'i-lucide-brain-circuit',
+    order: 3,
+    semesterId: 'ws2026',
+    unlockDateTime: new Date('2026-10-22'),
+    materials: [
+      { title: 'Sigmoid und ReLU (Demo)', link: 'https://www.desmos.com/calculator/1b6fgaylde' },
+      { title: 'Gradient Descent (Animation)', link: 'https://gifyu.com/image/SGlg6' },
+      { title: 'Mitmachübung: Training eines neuronalen Netzwerks', link: 'https://colab.research.google.com/drive/1HVMc-fIU4gWD0SiswDBzVSRafJzcFyaX?usp=sharing' },
+    ]
+  },
+  {
     title: 'Einstieg',
     icon: 'i-lucide-info',
     order: 1,
