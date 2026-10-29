@@ -87,6 +87,19 @@ export const lectures: Lecture[] = [
     ]
   },
   {
+    title: 'Backpropagation, Klassifikation, SVMs',
+    icon: 'i-lucide-fold-vertical',
+    order: 4,
+    semesterId: 'ws2026',
+    unlockDateTime: new Date('2026-10-29'),
+    materials: [
+      { title: 'Videoreihe: Neural Networks von 3Blue1Brown', link: 'https://www.youtube.com/playlist?list=PLgxo3DDiqnvAmMOTzZbgD9d4gtQ9V7Lig' },
+      { title: 'Kostenfunktionen für Klassifizierung (Demo)', link: 'https://www.desmos.com/calculator/hgh4bnrwxr' },
+      { title: 'Mitmachübung: Interaktive Demo für SVMs', link: 'https://greitemann.dev/svm-demo' },
+      { title: 'Python Fiddle', link: 'https://python-fiddle.com/' },
+    ]
+  },
+  {
     title: 'Einstieg',
     icon: 'i-lucide-info',
     order: 1,
