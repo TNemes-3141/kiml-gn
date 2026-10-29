@@ -71,12 +71,14 @@ Sobald Sie Ihr Modell trainiert haben, wird das Skript eine Datei namens `result
 
 Da herkömmliche Genauigkeit (Accuracy) bei ungleich verteilten Daten trügerisch sein kann, wird Ihre Abgabe anhand des **Matthews Correlation Coefficient (MCC)** bewertet. Der MCC gilt als der Goldstandard für binäre Klassifikation:
 
-$$MCC = \frac{TP \times TN - FP \times FN}{\sqrt{(TP+FP)(TP+FN)(TN+FP)(TN+FN)}}$$
+$$\text{MCC} = \frac{\text{TP} \cdot \text{TN} - \text{FP} \cdot \text{FN}}{\sqrt{(\text{TP}+\text{FP})(\text{TP}+\text{FN})(\text{TN}+\text{FP})(\text{TN}+\text{FN})}}$$
 
 Hierbei stehen die Variablen für:
-- **TP (True Positives):** Richtig erkannte Party-Tracks.
-- **TN (True Negatives):** Richtig erkannte Acoustic-Tracks.
-- **FP (False Positives):** Fälschlicherweise als Party deklarierte Acoustic-Tracks.
-- **FN (False Negatives):** Fälschlicherweise als Acoustic deklarierte Party-Tracks.
+- $\text{TP}$ **(True Positives):** Richtig erkannte Party-Tracks.
+- $\text{TN}$ **(True Negatives):** Richtig erkannte Acoustic-Tracks.
+- $\text{FP}$ **(False Positives):** Fälschlicherweise als Party deklarierte Acoustic-Tracks.
+- $\text{FN}$ **(False Negatives):** Fälschlicherweise als Acoustic deklarierte Party-Tracks.
 
 Ein perfektes Modell erhält einen Score von $1.0$. Ein unbrauchbares Modell, das lediglich rät oder durch eine Klassenimbalance immer das gleiche Genre vorhersagt, erhält einen Score von $0.0$. Ein Anti-Modell, welches immer das Gegenteil des perfekten Modells rät, erhält einen Score von $-1.0$. Um diese Aufgabe zu bestehen, müssen Sie eine Baseline von $0.7$ erreichen.
+
+Weitere Informationen zum MCC-Score finden Sie hier: https://scikit-learn.org/stable/modules/generated/sklearn.metrics.matthews_corrcoef.html
