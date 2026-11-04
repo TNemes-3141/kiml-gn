@@ -100,6 +100,17 @@ export const lectures: Lecture[] = [
     ]
   },
   {
+    title: 'Entscheidungsbäume, ID3, CART',
+    icon: 'i-lucide-git-fork',
+    order: 5,
+    semesterId: 'ws2026',
+    unlockDateTime: new Date('2026-11-05'),
+    materials: [
+      { title: "Splitting in Decision Trees (Animation)", link: "https://gifyu.com/image/SGl4j"},
+      { title: "Demo für DTL-Komplexität", link: "https://www.desmos.com/calculator/wlt2aaf15m"},
+    ]
+  },
+  {
     title: 'Einstieg',
     icon: 'i-lucide-info',
     order: 1,
