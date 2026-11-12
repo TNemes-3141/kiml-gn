@@ -111,6 +111,20 @@ export const lectures: Lecture[] = [
     ]
   },
   {
+    title: 'Clustering, K-means',
+    icon: 'i-lucide-chart-scatter',
+    order: 6,
+    semesterId: 'ws2026',
+    unlockDateTime: new Date('2026-11-12'),
+    materials: [
+      { title: 'Einfluss des Parameters "k" in KNN (Animation)', link: 'https://gifyu.com/image/SGnbt' },
+      { title: 'Mitmachübung: K-means zum Ausprobieren', link: 'http://alekseynp.com/viz/k-means.html' },
+      { title: 'Python Fiddle', link: 'https://python-fiddle.com/' },
+      { title: 'Mitmachübung: K-means++ in der Praxis', link: 'https://colab.research.google.com/drive/1oefWQgIqo_Q0rxkLMv_i5El__DQHOhPS' },
+      { title: 'Regularisierung in K-means', link: 'https://www.desmos.com/calculator/3efnnk7k8b' },
+    ]
+  },
+  {
     title: 'Einstieg',
     icon: 'i-lucide-info',
     order: 1,
