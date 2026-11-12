@@ -57,24 +57,24 @@ FEATURE_WEIGHTS = {
 
 Die folgenden Unterkapitel bieten Ihnen eine Anleitung zu den Stellschrauben, die Sie justieren können, um die Gruppierung zu optimieren.
 
-### 1. Anzahl der Cluster (K)
+### 1. Anzahl der Cluster (`K`)
 Der K-Means-Algorithmus muss im Vorfeld wissen, in wie viele Gruppen (Cluster) er die Daten aufteilen soll. Da Sie nicht wissen, wie viele Bohnensorten im Datensatz versteckt sind, generiert das Skript für Sie automatisch einen sogenannten "Ellenbogen-Plot" (Elbow-Method). Dieser zeigt, wie sich der WCSS-Wert für verschiedene K-Werte ändert. Suchen Sie in diesem Diagramm nach dem "Knick" (dem Punkt, an dem die Kurve merklich abflacht) und tragen Sie diesen Wert ein.
 
-### 2. Skalierungsmethode
+### 2. Skalierungsmethode (`SCALING_METHOD`)
 K-Means ist ein distanzbasierter Algorithmus. Er ordnet Punkte dem Zentrum zu, das am nächsten liegt. Wenn nun ein Merkmal wie die Fläche in die Zehntausende geht, während ein anderes Merkmal wie die Rundheit nur Werte zwischen 0 und 1 annimmt, wird die Distanzberechnung fast ausschließlich von der Fläche dominiert. Sie können das Problem lösen, indem Sie eine Skalierungsmethode wählen:
-- **none**: Keine Skalierung (die Rohdaten werden verwendet).
-- **minmax**: Skaliert alle Werte linear so, dass sie exakt zwischen 0 und 1 liegen.
-- **standard**: Standardisiert die Merkmale so, dass sie einen Mittelwert von 0 und eine Standardabweichung von 1 haben.
+- `none`: Keine Skalierung (die Rohdaten werden verwendet).
+- `minmax`: Skaliert alle Werte linear so, dass sie exakt zwischen 0 und 1 liegen.
+- `standard`: Standardisiert die Merkmale so, dass sie einen Mittelwert von 0 und eine Standardabweichung von 1 haben.
 
-### 3. Initialisierungsmethode
+### 3. Initialisierungsmethode (`INIT_METHOD`)
 Der Algorithmus beginnt, indem er zufällige Startpunkte für seine Cluster-Zentren wählt. Sie können entscheiden, wie diese Startpunkte gesetzt werden:
-- **random**: Wählt komplett zufällige Startpunkte.
-- **k-means++**: Ein wahrscheinlichkeitsbasierter Ansatz, der die Startpunkte so wählt, dass sie möglichst weit voneinander entfernt liegen.
+- `random`: Wählt komplett zufällige Startpunkte.
+- `k-means++`: Ein wahrscheinlichkeitsbasierter Ansatz, der die Startpunkte so wählt, dass sie möglichst weit voneinander entfernt liegen.
 
-### 4. Anzahl der Versuche
+### 4. Anzahl der Versuche (`N_ATTEMPTS`)
 Da K-Means von seinen Startpunkten abhängig ist, ist es üblich, den Algorithmus mehrmals mit verschiedenen Startpunkten laufen zu lassen und das beste Ergebnis zu behalten. Ein höherer Wert macht das Endergebnis robuster, erfordert aber etwas mehr Rechenzeit.
 
-### 5. Merkmalsgewichte (Feature Weights)
+### 5. Merkmalsgewichte (`FEATURE_WEIGHTS`)
 K-Means behandelt standardmäßig alle skalierten Merkmale als gleich wichtig. Oft sind jedoch bestimmte physikalische Eigenschaften aussagekräftiger für die Bohnensorte als andere (z.B. Form vs. absolute Größe), oder einige Merkmale sind redundant, da sie quasi das Gleiche messen.
 Sie können jedem Merkmal einen Multiplikator zuweisen:
 - Ein Wert von `1.0` belässt das Merkmal bei seiner normalen Wichtigkeit.
